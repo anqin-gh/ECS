@@ -4,9 +4,9 @@
 namespace ECS {
 
 bool PhysicsSystem_t::update(GameContext_t& context) const {
-    for(auto& e : context.getEntities()) {
-        e.x += e.vx;
-        e.y += e.vy;
+    for(auto& phy : context.getPhysicsComponents()) {
+        phy.x += phy.vx;
+        phy.y += phy.vy;
     }
     return true;
 }

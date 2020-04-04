@@ -26,12 +26,14 @@ void RenderSystem_t::drawAllEntities(const VecEntities_t& entities) const {
     auto getScreenXY = [&](uint32_t x, uint32_t y) { return screen + m_w * y + x; };
 
     auto drawEntity = [&](const Entity_t& e) {
-        auto screen = getScreenXY(e.x, e.y);
-        auto sprite_it = begin(e.sprite);
-        for(uint32_t y = 0; y < e.h; ++y) {
-            std::copy(sprite_it, sprite_it + e.w, screen);
-            sprite_it += e.w;
-            screen += m_w;
+        if(e.phy) {
+            auto screen = getScreenXY(e.phy->x, e.phy->y);
+            auto sprite_it = begin(e.sprite);
+            for(uint32_t y = 0; y < e.h; ++y) {
+                std::copy(sprite_it, sprite_it + e.w, screen);
+                sprite_it += e.w;
+                screen += m_w;
+            }
         }
     };
 

@@ -9,7 +9,9 @@ EntityManager_t::EntityManager_t() {
 
 void EntityManager_t::createEntity(uint32_t x, uint32_t y, std::string filename) {
     auto& e  = m_entities.emplace_back(filename);
-    e.x = x; e.y = y;
+    auto& ph = m_components.createPhysicsComponent();
+    e.phy = &ph;
+    e.phy->x = x; e.phy->y = y;
 }
 
 } // namespace ECS

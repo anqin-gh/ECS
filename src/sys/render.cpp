@@ -3,6 +3,7 @@
 extern "C" {
     #include <tinyPTC/src/tinyptc.h>
 }
+#include <cmp/physics.hpp>
 #include <man/entitymanager.hpp>
 #include <sys/render.hpp>
 #include <util/gamecontext.hpp>
@@ -20,7 +21,7 @@ RenderSystem_t::~RenderSystem_t() {
     ptc_close();
 }
 
-void RenderSystem_t::drawAllEntities(const VecEntities_t& entities) const {
+void RenderSystem_t::drawAllEntities(const Vec_t<Entity_t>& entities) const {
     auto screen = m_framebuffer.get();
 
     auto getScreenXY = [&](uint32_t x, uint32_t y) { return screen + m_w * y + x; };

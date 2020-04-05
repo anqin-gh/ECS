@@ -1,4 +1,5 @@
 #include <sys/collision.hpp>
+#include <cmp/physics.hpp>
 #include <util/gamecontext.hpp>
 
 namespace ECS {

@@ -2,17 +2,17 @@
 #include <memory>
 #include <cstdint>
 
+#include <cmp/entity.hpp>
 #include <util/typealiases.hpp>
 
 namespace ECS {
 
 struct GameContext_t;
-struct Entity_t;
 
 struct RenderSystem_t {
     explicit RenderSystem_t(uint32_t w, uint32_t h);
     ~RenderSystem_t();
-    void drawAllEntities(const VecEntities_t& entities) const;
+    void drawAllEntities(const Vec_t<Entity_t>& entities) const;
     bool update(const GameContext_t& context) const;
 
     static constexpr uint32_t kR = 0x00FF0000;

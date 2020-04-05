@@ -1,7 +1,5 @@
 #pragma once
 
-#include <util/typealiases.hpp>
-
 namespace ECS {
 
 struct GameContext_t;

@@ -1,3 +1,7 @@
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+
 #include <cmp/entity.hpp>
 
 namespace ECS {
@@ -10,12 +14,12 @@ Entity_t::Entity_t(uint32_t w_, uint32_t h_)
 
 Entity_t::Entity_t(std::string filename)
 {
-    std::vector<unsigned char> pixels {};
+    Vec_t<unsigned char> pixels {};
     unsigned long dw{0}, dh{0};
     std::ifstream file{filename, std::ios::binary};
     if(!file.is_open()) return;
 
-    std::vector<unsigned char> file_vector{
+    Vec_t<unsigned char> file_vector{
             std::istreambuf_iterator<char>{file}
         ,   std::istreambuf_iterator<char>{}
     };

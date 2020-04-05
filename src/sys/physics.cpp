@@ -1,3 +1,4 @@
+#include <cmp/physics.hpp>
 #include <sys/physics.hpp>
 #include <util/gamecontext.hpp>
 

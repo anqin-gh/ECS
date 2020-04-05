@@ -1,14 +1,12 @@
 #pragma once
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <cstdint>
-#include <cstring>
 
-#include <cmp/physics.hpp>
+#include <string>
+#include <cstdint>
+
 #include <picoPNG/src/picopng.hpp>
+#include <util/typealiases.hpp>
+
+struct PhysicsComponent_t;
 
 namespace ECS {
 
@@ -18,7 +16,7 @@ struct Entity_t {
 
     PhysicsComponent_t* phy{nullptr};
     uint32_t  w{0},  h{0};
-    std::vector<uint32_t> sprite{};
+    Vec_t<uint32_t> sprite{};
 };
 
 } // namespace ECS

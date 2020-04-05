@@ -17,7 +17,7 @@ struct ComponentStorage_t {
     ComponentStorage_t& operator=(ComponentStorage_t const&) = delete;
     ComponentStorage_t& operator=(ComponentStorage_t&&) = delete;
 
-    PhysicsComponent_t& createPhysicsComponent();
+    PhysicsComponent_t& createPhysicsComponent(EntityID_t eid);
 
     const Vec_t<PhysicsComponent_t>& getPhysicsComponents() const { return m_physics_components; }
           Vec_t<PhysicsComponent_t>& getPhysicsComponents()       { return m_physics_components; }

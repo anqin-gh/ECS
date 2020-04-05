@@ -9,7 +9,7 @@ EntityManager_t::EntityManager_t() {
 
 void EntityManager_t::createEntity(uint32_t x, uint32_t y, std::string filename) {
     auto& e  = m_entities.emplace_back(filename);
-    auto& ph = m_components.createPhysicsComponent();
+    auto& ph = m_components.createPhysicsComponent(e.getID());
     e.phy = &ph;
     e.phy->x = x; e.phy->y = y;
 }

@@ -1,7 +1,3 @@
-#include <exception>
-#include <iostream>
-#include <string>
-
 #include <cstdint>
 #include <cstdio>
 
@@ -17,10 +13,6 @@ constexpr uint32_t kSCRWIDTH  { 640 };
 constexpr uint32_t kSCRHEIGHT { 360 };
 
 int main() {
-    int i = 1;
-    if(*(char *)&i == 1) std::cout << "Little-endian\n";
-    else std::cout << "Big-endian\n";
-
     try {
         ECS::EntityManager_t entityMan;
         entityMan.createEntity(70, 150, "assets/jerry.png");
@@ -32,7 +24,7 @@ int main() {
             collision.update(entityMan);
         }
     } catch(...) {
-        std::puts("Capturada4");
+        std::puts("Capturada");
     }
 
     return 0;

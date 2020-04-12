@@ -18,6 +18,8 @@ struct GameContext_t {
     virtual const Vec_t<RenderComponent_t>&  getRenderComponents() const = 0;
     virtual       Vec_t<RenderComponent_t>&  getRenderComponents()       = 0;
 
+    virtual const PhysicsComponent_t* getRequiredPhysicsComponentByEntityID(EntityID_t eid) const = 0;
+    virtual       PhysicsComponent_t* getRequiredPhysicsComponentByEntityID(EntityID_t eid)       = 0;
 };
 
 

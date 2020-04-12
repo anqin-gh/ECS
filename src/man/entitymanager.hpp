@@ -2,7 +2,6 @@
 #include <vector>
 #include <cstdint>
 
-#include <cmp/entity.hpp>
 #include <man/componentstorage.hpp>
 #include <util/gamecontext.hpp>
 #include <util/typealiases.hpp>
@@ -18,6 +17,9 @@ struct EntityManager_t : public GameContext_t {
 
     const Vec_t<PhysicsComponent_t>& getPhysicsComponents() const override { return m_components.getPhysicsComponents(); }
           Vec_t<PhysicsComponent_t>& getPhysicsComponents()       override { return m_components.getPhysicsComponents(); }
+
+    const Vec_t<RenderComponent_t>& getRenderComponents() const override { return m_components.getRenderComponents(); }
+          Vec_t<RenderComponent_t>& getRenderComponents()       override { return m_components.getRenderComponents(); }
 
 private:
     static constexpr std::size_t kNUM_INITIAL_ENTITIES{1000};

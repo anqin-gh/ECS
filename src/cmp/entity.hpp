@@ -1,24 +1,18 @@
 #pragma once
-
-#include <string>
-#include <cstdint>
-
-#include <picoPNG/src/picopng.hpp>
 #include <util/typealiases.hpp>
 
 struct PhysicsComponent_t;
+struct RenderComponent_t;
 
 namespace ECS {
 
 struct Entity_t {
-    explicit Entity_t(uint32_t w_, uint32_t h_);
-    explicit Entity_t(std::string filename);
+    explicit Entity_t() = default;
 
     EntityID_t getID() const { return ID; }
 
     PhysicsComponent_t* phy{nullptr};
-    uint32_t  w{0},  h{0};
-    Vec_t<uint32_t> sprite{};
+    RenderComponent_t*  ren{nullptr};
 
 private:
     inline static EntityID_t nextID{0};

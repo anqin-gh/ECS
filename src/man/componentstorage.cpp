@@ -8,4 +8,10 @@ ComponentStorage_t::createPhysicsComponent(EntityID_t eid) {
     return cmp;
 }
 
+RenderComponent_t&
+ComponentStorage_t::createRenderComponent(EntityID_t eid) {
+    auto& cmp = m_render_components.emplace_back(eid);
+    return cmp;
+}
+
 } // namespace ECS

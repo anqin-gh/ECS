@@ -12,7 +12,7 @@ struct GameContext_t;
 struct RenderSystem_t {
     explicit RenderSystem_t(uint32_t w, uint32_t h);
     ~RenderSystem_t();
-    void drawAllEntities(const Vec_t<Entity_t>& entities) const;
+    void drawAllEntities(const GameContext_t& context) const;
     bool update(const GameContext_t& context) const;
 
 private:

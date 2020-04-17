@@ -11,8 +11,8 @@ struct Component_t {
         : entityID{eid}
     {}
 
-    ComponentID_t getID() const { return ID; }
-    ComponentID_t getBelongingEntityID() const { return entityID; }
+    constexpr ComponentID_t getID() const noexcept { return ID; }
+    constexpr ComponentID_t getBelongingEntityID() const noexcept { return entityID; }
 
 private:
     inline static ComponentID_t nextID{0};

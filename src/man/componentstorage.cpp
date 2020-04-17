@@ -14,4 +14,10 @@ ComponentStorage_t::createRenderComponent(EntityID_t eid) {
     return cmp;
 }
 
+InputComponent_t&
+ComponentStorage_t::createInputComponent(EntityID_t eid) {
+    auto& cmp = m_input_components.emplace_back(eid);
+    return cmp;
+}
+
 } // namespace ECS

@@ -27,9 +27,9 @@ void RenderSystem_t::drawAllEntities(const GameContext_t& ctx) const {
     auto getScreenXY = [&](uint32_t x, uint32_t y) { return screen + m_w * y + x; };
 
     auto drawEntity = [&](const auto& ren) {
-        auto ph = ctx.getRequiredPhysicsComponentByEntityID(ren.getBelongingEntityID());
-        if(ph) {
-            auto screen = getScreenXY(ph->x, ph->y);
+        auto e = ctx.getEntityByID(ren.getBelongingEntityID());
+        if(e && e->phy) {
+            auto screen = getScreenXY(e->phy->x, e->phy->y);
             auto sprite_it = begin(ren.sprite);
             for(uint32_t y = 0; y < ren.h; ++y) {
                 std::copy(sprite_it, sprite_it + ren.w, screen);

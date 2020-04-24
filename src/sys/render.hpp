@@ -32,9 +32,13 @@ struct RenderSystem_t {
                 auto screen = getScreenXY(e->phy->x, e->phy->y);
                 auto sprite_it = begin(ren.sprite);
                 for(uint32_t y = 0; y < ren.h; ++y) {
-                    std::copy(sprite_it, sprite_it + ren.w, screen);
-                    sprite_it += ren.w;
-                    screen += m_w;
+                    for(uint32_t x = 0; x < ren.w; ++x) {
+                        if (*sprite_it & 0xFF000000)
+                            *screen = *sprite_it;
+                        ++sprite_it;
+                        ++screen;
+                    }
+                    screen += m_w - ren.w;
                 }
             }
         };

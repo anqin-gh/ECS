@@ -1,9 +1,8 @@
 #pragma once
+#include <cmp/input.hpp>
+#include <cmp/physics.hpp>
+#include <cmp/render.hpp>
 #include <util/typealiases.hpp>
-
-struct InputComponent_t;
-struct PhysicsComponent_t;
-struct RenderComponent_t;
 
 namespace ECS {
 

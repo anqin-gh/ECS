@@ -29,10 +29,10 @@ int main() {
         entityMan.addInputComponent(e);
 
         // Systems
-        const ECS::RenderSystem_t render{kSCRWIDTH, kSCRHEIGHT};
-        ECS::PhysicsSystem_t physics;
-        ECS::CollisionSystem_t collision;
-        ECS::InputSystem_t input;
+        const ECS::RenderSystem_t<ECS::EntityManager_t> render{kSCRWIDTH, kSCRHEIGHT};
+        ECS::PhysicsSystem_t<ECS::EntityManager_t> physics;
+        ECS::CollisionSystem_t<ECS::EntityManager_t> collision;
+        ECS::InputSystem_t<ECS::EntityManager_t> input;
 
         using clk = std::chrono::steady_clock;
         // main loop

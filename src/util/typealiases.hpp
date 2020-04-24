@@ -1,9 +1,14 @@
 #pragma once
+#include <functional>
+#include <memory>
 #include <optional>
 #include <unordered_map>
 #include <vector>
 
 namespace ECS {
+    template<typename T>
+    using UPtr_t = std::unique_ptr<T>;
+
     template<typename T>
     using Vec_t = std::vector<T>;
 
@@ -13,6 +18,10 @@ namespace ECS {
     template<typename T>
     using Opt_t = std::optional<T>;
 
-    using EntityID_t    = std::size_t;
-    using ComponentID_t    = std::size_t;
+    template<typename T>
+    using Ref_t = std::reference_wrapper<T>;
+
+    using EntityID_t        = std::size_t;
+    using ComponentID_t     = std::size_t;
+    using ComponentTypeID_t = std::size_t;
 } // namespace ECS

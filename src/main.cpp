@@ -39,6 +39,8 @@ ECS::Entity_t& createPlayer(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
     man.addComponent<ECS::InputComponent_t>(e);
     
     auto* phy = e.getComponent<ECS::PhysicsComponent_t>();
+    phy->vx = 0;
+    phy->vy = 0;
 
     return e;
 }

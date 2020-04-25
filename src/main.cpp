@@ -44,7 +44,7 @@ ECS::Entity_t& createPlayer(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
 }
 
 ECS::Entity_t& createBlade(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
-    auto& e = createEntity(man, x, y, "assets/jerry.png");
+    auto& e = createEntity(man, x, y, "assets/blade.png");
     return e;
 }
 

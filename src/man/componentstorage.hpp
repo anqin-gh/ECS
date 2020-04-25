@@ -54,7 +54,7 @@ struct ComponentStorage_t {
 
     template<typename CMP_t>
     Vec_t<CMP_t>& getComponents() {
-        if (auto found = const_cast<const decltype(this)>(this)->getComponentsUtil<CMP_t>())
+        if (auto found = const_cast<const ComponentStorage_t*>(this)->getComponentsUtil<CMP_t>())
             return const_cast<Vec_t<CMP_t>&>(found->get());
         return createComponentVector<CMP_t>();
     }

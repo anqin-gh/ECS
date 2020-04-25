@@ -11,6 +11,8 @@ struct Component_t {
         : entityID{eid}
     {}
 
+    virtual ~Component_t() = default;
+
     template<typename CMP_t>
     static ComponentTypeID_t getComponentTypeID() {
         static ComponentTypeID_t typeID{++nextTypeID};

@@ -19,14 +19,43 @@ constexpr uint32_t kSCRHEIGHT { 360 };
 using namespace std::chrono_literals;
 constexpr auto kSPF { 1ms };
 
+ECS::Entity_t& createEntity(ECS::EntityManager_t& man, uint32_t x, uint32_t y, const std::string_view filename) {
+    auto& e   = man.createEntity();
+
+    auto& ph  = man.addComponent<ECS::PhysicsComponent_t>(e);
+    ph.x = x; ph.y = y;
+    e.addComponent(ph);
+
+    auto& rn = man.addComponent<ECS::RenderComponent_t>(e);
+    rn.loadFromFile(filename);
+    e.addComponent(rn);
+
+    return e;
+}
+
+ECS::Entity_t& createPlayer(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
+    auto& e = createEntity(man, x, y, "assets/jerry.png");
+    
+    man.addComponent<ECS::InputComponent_t>(e);
+    
+    auto* phy = e.getComponent<ECS::PhysicsComponent_t>();
+
+    return e;
+}
+
+ECS::Entity_t& createBlade(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
+    auto& e = createEntity(man, x, y, "assets/jerry.png");
+    return e;
+}
+
+
 int main() {
     try {
         // Entities
         ECS::EntityManager_t entityMan;
-        entityMan.createEntity( 20, 40, "assets/jerry.png");
-        entityMan.createEntity( 80, 10, "assets/jerry.png");
-        auto& e = entityMan.createEntity(200, 170, "assets/jerry.png");
-        entityMan.addInputComponent(e);
+        createBlade(entityMan, 90, 160);
+        createBlade(entityMan, 80, 100);
+        createPlayer(entityMan, 200, 170);
 
         // Systems
         const ECS::RenderSystem_t<ECS::EntityManager_t> render{kSCRWIDTH, kSCRHEIGHT};

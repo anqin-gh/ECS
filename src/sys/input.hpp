@@ -17,13 +17,13 @@ struct InputSystem_t {
         ptc_process_events();
 
         for( auto& inp : ctx.template getComponents<InputComponent_t>() ) {
-            auto* e = ctx.template getEntityByID( inp.getBelongingEntityID() );
-            if(e && e->phy) {
-                auto& phy = *(e->phy);
-                if(ms_keyboard.isKeyPressed( inp.key_left   )) phy.vx = -1;
-                if(ms_keyboard.isKeyPressed( inp.key_right  )) phy.vx =  1;
-                if(ms_keyboard.isKeyPressed( inp.key_up     )) phy.vy = -1;
-                if(ms_keyboard.isKeyPressed( inp.key_down   )) phy.vy =  1;
+            if (auto* e = ctx.template getEntityByID( inp.getBelongingEntityID() )) {
+                if (auto* phy = e->template getComponent<PhysicsComponent_t>()) {
+                    if(ms_keyboard.isKeyPressed( inp.key_left   )) phy->vx = -1;
+                    if(ms_keyboard.isKeyPressed( inp.key_right  )) phy->vx =  1;
+                    if(ms_keyboard.isKeyPressed( inp.key_up     )) phy->vy = -1;
+                    if(ms_keyboard.isKeyPressed( inp.key_down   )) phy->vy =  1;
+                }
             }
         }
         return true;

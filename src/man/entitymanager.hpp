@@ -11,9 +11,14 @@ namespace ECS {
 struct EntityManager_t {
     explicit EntityManager_t();
 
-    Entity_t& createEntity(uint32_t x, uint32_t y, const std::string_view filename);
+    Entity_t& createEntity() { return m_entities.emplace_back(); }
 
-    void addInputComponent(Entity_t& e);
+    template<typename CMP_t>
+    CMP_t& addComponent(Entity_t& e) {
+        auto& cmp = m_components.createComponent<CMP_t>( e.getID() );
+        e.addComponent(cmp);
+        return cmp;
+    }
    
     const Vec_t<Entity_t>& getEntities() const { return m_entities; }
           Vec_t<Entity_t>& getEntities()       { return m_entities; }

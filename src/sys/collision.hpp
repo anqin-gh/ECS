@@ -10,14 +10,16 @@ struct CollisionSystem_t {
 
     bool update(GameCTX_t& ctx) const {
         for(auto& e : ctx.template getEntities()) {
-            if(e.phy && e.ren) {
-                if(e.phy->x > 640 || e.phy->x + e.ren->w > 640) {
-                    e.phy->x -= e.phy->vx;
-                    e.phy->vx = -e.phy->vx;
+            auto* phy = e.template getComponent<PhysicsComponent_t>();
+            auto* ren = e.template getComponent<RenderComponent_t>();
+            if(phy && ren) {
+                if(phy->x > 640 || phy->x + ren->w > 640) {
+                    phy->x -= phy->vx;
+                    phy->vx = -phy->vx;
                 }
-                if(e.phy->y > 360 || e.phy->y + e.ren->h > 360) {
-                    e.phy->y -= e.phy->vy;
-                    e.phy->vy = -e.phy->vy;
+                if(phy->y > 360 || phy->y + ren->h > 360) {
+                    phy->y -= phy->vy;
+                    phy->vy = -phy->vy;
                 }
             }
         }

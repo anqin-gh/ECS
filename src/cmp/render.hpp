@@ -7,7 +7,7 @@
 
 namespace ECS {
 
-struct RenderComponent_t : public Component_t {
+struct RenderComponent_t : public ComponentBase_t<RenderComponent_t> {
     explicit RenderComponent_t(EntityID_t eid);
 
     void loadFromFile(const std::string_view filename);

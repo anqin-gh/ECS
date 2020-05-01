@@ -13,9 +13,9 @@ struct BoundingBox_t {
 };
 
 
-struct ColliderComponent_t : public Component_t {
+struct ColliderComponent_t : public ComponentBase_t<ColliderComponent_t> {
     explicit ColliderComponent_t(EntityID_t eid)
-        : Component_t{eid}
+        : ComponentBase_t{eid}
     {}
 
     BoundingBox_t box;

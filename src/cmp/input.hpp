@@ -5,9 +5,9 @@
 
 namespace ECS {
 
-struct InputComponent_t : public Component_t {
+struct InputComponent_t : public ComponentBase_t<InputComponent_t> {
     explicit InputComponent_t(EntityID_t eid)
-        : Component_t(eid)
+        : ComponentBase_t(eid)
     {}
 
     static constexpr KeySym key_left     { XK_o };

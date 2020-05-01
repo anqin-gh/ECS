@@ -25,11 +25,9 @@ ECS::Entity_t& createEntity(ECS::EntityManager_t& man, uint32_t x, uint32_t y, c
 
     auto& ph  = man.addComponent<ECS::PhysicsComponent_t>(e);
     ph.x = x; ph.y = y;
-    e.addComponent(ph);
 
     auto& rn = man.addComponent<ECS::RenderComponent_t>(e);
     rn.loadFromFile(filename);
-    e.addComponent(rn);
 
     auto& cl = man.addComponent<ECS::ColliderComponent_t>(e);
     cl.box.x_left  = 0;

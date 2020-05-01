@@ -13,13 +13,13 @@ struct Entity_t {
     
     template <typename CMP_t>
     void addComponent(CMP_t& cmp) {
-        auto typeID = CMP_t::template getComponentTypeID<CMP_t>();
+        auto typeID = CMP_t::getComponentTypeID();
         m_components[typeID] = &cmp;
     }
 
     template <typename CMP_t>
     const CMP_t* getComponent() const {
-        auto typeID = CMP_t::template getComponentTypeID<CMP_t>();
+        auto typeID = CMP_t::getComponentTypeID();
         auto found = m_components.find(typeID);
         if (found != end(m_components)) return dynamic_cast<const CMP_t*>(found->second);
         return nullptr;
@@ -34,7 +34,7 @@ struct Entity_t {
 private:
     inline static EntityID_t nextID{0};
     const EntityID_t ID{++nextID};
-    UMap_t<ComponentTypeID_t, Component_t*> m_components;
+    UMap_t<ComponentTypeID_t, AbstractComponent_t*> m_components;
 };
 
 } // namespace ECS

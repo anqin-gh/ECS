@@ -6,9 +6,9 @@ namespace ECS {
 
 using namespace std::chrono_literals;
 
-struct SpawnerComponent_t : public Component_t {
+struct SpawnerComponent_t : public ComponentBase_t<SpawnerComponent_t> {
     explicit SpawnerComponent_t(EntityID_t eid)
-        : Component_t(eid)
+        : ComponentBase_t(eid)
     {}
 
     using clk = std::chrono::steady_clock;

@@ -36,7 +36,7 @@ struct ComponentStorage_t {
 
     template<typename CMP_t>
     Vec_t<CMP_t>& createComponentVector() {
-        auto typeID{CMP_t::template getComponentTypeID<CMP_t>()};
+        auto typeID{CMP_t::getComponentTypeID()};
         auto cmpVec = std::make_unique<ComponentVector_t<CMP_t>>();
         cmpVec->m_components.reserve(m_initial_size);
         auto* vecPtr = cmpVec.get();
@@ -62,7 +62,7 @@ struct ComponentStorage_t {
 private:
     template<typename CMP_t>
     Opt_t<Ref_t<const Vec_t<CMP_t>>> getComponentsUtil() const {
-        auto found = m_components.find(CMP_t::template getComponentTypeID<CMP_t>());
+        auto found = m_components.find(CMP_t::getComponentTypeID());
         if (found != end(m_components)) {
             auto* cmpVec = dynamic_cast<ComponentVector_t<CMP_t>*>(found->second.get());
             return cmpVec->m_components;

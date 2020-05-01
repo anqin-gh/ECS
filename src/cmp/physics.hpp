@@ -5,9 +5,9 @@
 
 namespace ECS {
 
-struct PhysicsComponent_t : public Component_t {
+struct PhysicsComponent_t : public ComponentBase_t<PhysicsComponent_t> {
     explicit PhysicsComponent_t(EntityID_t eid)
-        : Component_t(eid)
+        : ComponentBase_t(eid)
     {}
 
     uint32_t  x{0},  y{0};

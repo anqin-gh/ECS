@@ -7,7 +7,7 @@
 namespace ECS {
 
 RenderComponent_t::RenderComponent_t(EntityID_t eid)
-    : Component_t(eid)
+    : ComponentBase_t(eid)
 {}
 
 auto RenderComponent_t::loadPNGFileIntoVector(const std::string_view filename) {

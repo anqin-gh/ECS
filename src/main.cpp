@@ -30,6 +30,12 @@ ECS::Entity_t& createEntity(ECS::EntityManager_t& man, uint32_t x, uint32_t y, c
     rn.loadFromFile(filename);
     e.addComponent(rn);
 
+    auto& cl = man.addComponent<ECS::ColliderComponent_t>(e);
+    cl.box.x_left  = 0;
+    cl.box.x_right = rn.w;
+    cl.box.y_up    = 0;
+    cl.box.y_down  = rn.h;
+
     return e;
 }
 
@@ -62,7 +68,7 @@ int main() {
         // Systems
         const ECS::RenderSystem_t<ECS::EntityManager_t> render{kSCRWIDTH, kSCRHEIGHT};
         ECS::PhysicsSystem_t<ECS::EntityManager_t> physics;
-        ECS::CollisionSystem_t<ECS::EntityManager_t> collision;
+        ECS::CollisionSystem_t<ECS::EntityManager_t> collision{kSCRWIDTH, kSCRHEIGHT};
         ECS::InputSystem_t<ECS::EntityManager_t> input;
 
         using clk = std::chrono::steady_clock;

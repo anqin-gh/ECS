@@ -1,5 +1,5 @@
 #pragma once
-#include <util/typealiases.hpp>
+#include <ecs/util/typealiases.hpp>
 #include <X11/X.h>
 #include <X11/keysym.h>
 

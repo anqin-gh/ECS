@@ -1,13 +1,11 @@
 #pragma once
 #include <chrono>
-#include <cmp/component.hpp>
-
-namespace ECS {
+#include <ecs/cmp/component.hpp>
 
 using namespace std::chrono_literals;
 
-struct SpawnerComponent_t : public ComponentBase_t<SpawnerComponent_t> {
-    explicit SpawnerComponent_t(EntityID_t eid)
+struct SpawnerComponent_t : public ECS::ComponentBase_t<SpawnerComponent_t> {
+    explicit SpawnerComponent_t(ECS::EntityID_t eid)
         : ComponentBase_t(eid)
     {}
 
@@ -16,5 +14,3 @@ struct SpawnerComponent_t : public ComponentBase_t<SpawnerComponent_t> {
     clk::duration spawn_interval{2s};
     std::size_t to_be_spawned{2};
 };
-
-} // namespace ECS

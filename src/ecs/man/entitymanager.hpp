@@ -2,9 +2,9 @@
 #include <string_view>
 #include <cstdint>
 
-#include <cmp/entity.hpp>
-#include <man/componentstorage.hpp>
-#include <util/typealiases.hpp>
+#include <ecs/cmp/entity.hpp>
+#include <ecs/man/componentstorage.tpp>
+#include <ecs/util/typealiases.hpp>
 
 namespace ECS {
 
@@ -14,11 +14,7 @@ struct EntityManager_t {
     Entity_t& createEntity() { return m_entities.emplace_back(); }
 
     template<typename CMP_t>
-    CMP_t& addComponent(Entity_t& e) {
-        auto& cmp = m_components.createComponent<CMP_t>( e.getID() );
-        e.addComponent(cmp);
-        return cmp;
-    }
+    CMP_t& addComponent(Entity_t& e);
    
     const Vec_t<Entity_t>& getEntities() const { return m_entities; }
           Vec_t<Entity_t>& getEntities()       { return m_entities; }

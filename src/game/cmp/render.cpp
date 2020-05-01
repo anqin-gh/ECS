@@ -1,23 +1,21 @@
 #include <fstream>
 #include <tuple>
 
-#include <cmp/render.hpp>
+#include <game/cmp/render.hpp>
 #include <picoPNG/src/picopng.hpp>
 
-namespace ECS {
-
-RenderComponent_t::RenderComponent_t(EntityID_t eid)
+RenderComponent_t::RenderComponent_t(ECS::EntityID_t eid)
     : ComponentBase_t(eid)
 {}
 
 auto RenderComponent_t::loadPNGFileIntoVector(const std::string_view filename) {
-    Vec_t<unsigned char> pixels;
+    ECS::Vec_t<unsigned char> pixels;
     unsigned long dw, dh;
 
     std::ifstream file{filename.data(), std::ios::binary};
     // if(!file.is_open()) return; // TODO: error handling
 
-    Vec_t<unsigned char> file_vector{
+    ECS::Vec_t<unsigned char> file_vector{
             std::istreambuf_iterator<char>{file}
         ,   std::istreambuf_iterator<char>{}
     };
@@ -33,7 +31,7 @@ void RenderComponent_t::loadFromFile(const std::string_view filename) {
     initSpriteFromABGRData(pixels);
 }
 
-void RenderComponent_t::initSpriteFromABGRData(const Vec_t<unsigned char>& pixels) {
+void RenderComponent_t::initSpriteFromABGRData(const ECS::Vec_t<unsigned char>& pixels) {
     sprite.reserve(pixels.size()/4);
     for(auto it = begin(pixels); it != end(pixels); it += 4) {
         uint32_t pixel = 
@@ -44,5 +42,3 @@ void RenderComponent_t::initSpriteFromABGRData(const Vec_t<unsigned char>& pixel
                 sprite.push_back(pixel);
     }
 }
-
-} // namespace ECS

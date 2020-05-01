@@ -7,12 +7,12 @@
 extern "C" {
     #include <tinyPTC/src/tinyptc.h>
 }
-#include <man/entitymanager.hpp>
-#include <sys/collision.hpp>
-#include <sys/input.hpp>
-#include <sys/physics.hpp>
-#include <sys/render.hpp>
-#include <sys/spawn.hpp>
+#include <ecs/man/entitymanager.tpp>
+#include <game/sys/collision.tpp>
+#include <game/sys/input.tpp>
+#include <game/sys/physics.tpp>
+#include <game/sys/render.tpp>
+#include <game/sys/spawn.tpp>
 
 constexpr uint32_t kSCRWIDTH  { 640 };
 constexpr uint32_t kSCRHEIGHT { 360 };
@@ -23,13 +23,13 @@ constexpr auto kSPF { 1ms };
 ECS::Entity_t& createEntity(ECS::EntityManager_t& man, uint32_t x, uint32_t y, const std::string_view filename) {
     auto& e   = man.createEntity();
 
-    auto& ph  = man.addComponent<ECS::PhysicsComponent_t>(e);
+    auto& ph  = man.addComponent<PhysicsComponent_t>(e);
     ph.x = x; ph.y = y;
 
-    auto& rn = man.addComponent<ECS::RenderComponent_t>(e);
+    auto& rn = man.addComponent<RenderComponent_t>(e);
     rn.loadFromFile(filename);
 
-    auto& cl = man.addComponent<ECS::ColliderComponent_t>(e);
+    auto& cl = man.addComponent<ColliderComponent_t>(e);
     cl.box.x_left  = 0;
     cl.box.x_right = rn.w;
     cl.box.y_up    = 0;
@@ -40,13 +40,13 @@ ECS::Entity_t& createEntity(ECS::EntityManager_t& man, uint32_t x, uint32_t y, c
 
 ECS::Entity_t& createPlayer(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
     auto& e = createEntity(man, x, y, "assets/jerry.png");
-    man.addComponent<ECS::InputComponent_t>(e);
+    man.addComponent<InputComponent_t>(e);
     return e;
 }
 
 ECS::Entity_t& createBlade(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
     auto& e = createEntity(man, x, y, "assets/blade.png");
-    auto* phy = e.getComponent<ECS::PhysicsComponent_t>();
+    auto* phy = e.getComponent<PhysicsComponent_t>();
     phy->vx = 1;
     phy->vy = 1;
     return e;
@@ -55,13 +55,13 @@ ECS::Entity_t& createBlade(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
 ECS::Entity_t& createSpawner(ECS::EntityManager_t& man, uint32_t x, uint32_t y) {
     auto& e   = man.createEntity();
 
-    [[maybe_unused]]auto& sp = man.addComponent<ECS::SpawnerComponent_t>(e);
+    [[maybe_unused]]auto& sp = man.addComponent<SpawnerComponent_t>(e);
 
-    auto& ph  = man.addComponent<ECS::PhysicsComponent_t>(e);
+    auto& ph  = man.addComponent<PhysicsComponent_t>(e);
     ph.x = x; ph.y = y;
     ph.vx = 0; ph.vy = 1;
 
-    auto& cl  = man.addComponent<ECS::ColliderComponent_t>(e);
+    auto& cl  = man.addComponent<ColliderComponent_t>(e);
     cl.box.x_left  = 0;
     cl.box.x_right = 20;
     cl.box.y_up    = 0;
@@ -81,11 +81,11 @@ int main() {
         createSpawner(entityMan, 200, 150);
 
         // Systems
-        const ECS::RenderSystem_t<ECS::EntityManager_t> render{kSCRWIDTH, kSCRHEIGHT};
-        ECS::PhysicsSystem_t<ECS::EntityManager_t> physics;
-        ECS::CollisionSystem_t<ECS::EntityManager_t> collision{kSCRWIDTH, kSCRHEIGHT};
-        ECS::InputSystem_t<ECS::EntityManager_t> input;
-        ECS::SpawnSystem_t<ECS::EntityManager_t> spawn;
+        const RenderSystem_t<ECS::EntityManager_t> render{kSCRWIDTH, kSCRHEIGHT};
+        PhysicsSystem_t<ECS::EntityManager_t> physics;
+        CollisionSystem_t<ECS::EntityManager_t> collision{kSCRWIDTH, kSCRHEIGHT};
+        InputSystem_t<ECS::EntityManager_t> input;
+        SpawnSystem_t<ECS::EntityManager_t> spawn;
 
         using clk = std::chrono::steady_clock;
         // main loop

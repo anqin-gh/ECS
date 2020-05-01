@@ -1,10 +1,21 @@
 #include <algorithm>
-#include <man/entitymanager.hpp>
+#include "entitymanager.hpp"
 
 namespace ECS {
 
 EntityManager_t::EntityManager_t() {
     m_entities.reserve(kNUM_INITIAL_ENTITIES);
+}
+
+template<typename CMP_t>
+CMP_t& EntityManager_t::addComponent(Entity_t& e) {
+    auto* eCmp = e.getComponent<CMP_t>();
+    if (eCmp) return *eCmp;
+
+    // Create component if it doesn't exist
+    auto& cmp = m_components.createComponent<CMP_t>( e.getID() );
+    e.addComponent(cmp);
+    return cmp;
 }
 
 const Entity_t* EntityManager_t::getEntityByID(EntityID_t eid) const {

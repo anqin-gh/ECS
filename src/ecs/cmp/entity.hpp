@@ -1,8 +1,8 @@
 #pragma once
-#include <cmp/input.hpp>
-#include <cmp/physics.hpp>
-#include <cmp/render.hpp>
-#include <util/typealiases.hpp>
+#include <game/cmp/input.hpp>
+#include <game/cmp/physics.hpp>
+#include <game/cmp/render.hpp>
+#include <ecs/util/typealiases.hpp>
 
 namespace ECS {
 

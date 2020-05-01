@@ -1,3 +1,4 @@
+#include <game/cmp/physics.hpp>
 #include "input.hpp"
 
 template<typename GameCTX_t>

@@ -3,7 +3,7 @@
 namespace ECS {
 
 template <typename Container, typename ConstIterator>
-typename Container::iterator remove_constness(Container& c, ConstIterator it)
+constexpr typename Container::iterator remove_constness(Container& c, ConstIterator it) noexcept
 {
     return c.erase(it, it);
 }

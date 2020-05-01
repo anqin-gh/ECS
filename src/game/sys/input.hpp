@@ -1,5 +1,4 @@
 #pragma once
-#include <game/cmp/physics.hpp>
 #include <game/cmp/input.hpp>
 #include <ecs/util/keyboard.hpp>
 #include <ecs/util/typealiases.hpp>

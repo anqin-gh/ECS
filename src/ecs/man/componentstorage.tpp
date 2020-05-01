@@ -23,7 +23,7 @@ const Vec_t<CMP_t>& ComponentStorage_t::getComponents() const {
 }
 
 template<typename CMP_t>
-Opt_t<Ref_t<const Vec_t<CMP_t>>> ComponentStorage_t::getComponentsUtil() const {
+Opt_t<Ref_t<const Vec_t<CMP_t>>> ComponentStorage_t::getComponentsUtil() const noexcept {
     auto found = m_components.find(CMP_t::getComponentTypeID());
     if (found != end(m_components)) {
         auto* cmpVec = dynamic_cast<ComponentVector_t<CMP_t>*>(found->second.get());

@@ -1,3 +1,6 @@
+#include <game/cmp/collider.hpp>
+#include <game/cmp/physics.hpp>
+#include <game/cmp/render.hpp>
 #include <game/cmp/spawner.hpp>
 #include "spawn.hpp"
 

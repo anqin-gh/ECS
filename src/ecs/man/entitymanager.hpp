@@ -1,7 +1,4 @@
 #pragma once
-#include <string_view>
-#include <cstdint>
-
 #include <ecs/cmp/entity.hpp>
 #include <ecs/man/componentstorage.tpp>
 #include <ecs/util/typealiases.hpp>
@@ -16,8 +13,8 @@ struct EntityManager_t {
     template<typename CMP_t>
     CMP_t& addComponent(Entity_t& e);
    
-    const Vec_t<Entity_t>& getEntities() const { return m_entities; }
-          Vec_t<Entity_t>& getEntities()       { return m_entities; }
+    const Vec_t<Entity_t>& getEntities() const noexcept { return m_entities; }
+          Vec_t<Entity_t>& getEntities()       noexcept { return m_entities; }
 
     const Entity_t* getEntityByID(EntityID_t eid) const;
           Entity_t* getEntityByID(EntityID_t eid)      ;

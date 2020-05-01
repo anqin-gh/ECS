@@ -35,7 +35,7 @@ struct ComponentStorage_t {
 
 private:
     template<typename CMP_t>
-    Opt_t<Ref_t<const Vec_t<CMP_t>>> getComponentsUtil() const;
+    Opt_t<Ref_t<const Vec_t<CMP_t>>> getComponentsUtil() const noexcept;
 
 private:
     std::size_t m_initial_size{100};

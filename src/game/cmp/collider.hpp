@@ -1,9 +1,8 @@
 #pragma once
-#include <string_view>
 #include <cstdint>
 
 #include <ecs/cmp/component.hpp>
-#include <ecs/util/typealiases.hpp>
+#include <game/cmp/collider.hpp>
 
 struct BoundingBox_t {
     uint32_t x_left{0}, x_right{0};

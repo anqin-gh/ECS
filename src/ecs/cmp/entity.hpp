@@ -18,7 +18,7 @@ struct Entity_t {
     }
 
     template <typename CMP_t>
-    const CMP_t* getComponent() const {
+    const CMP_t* getComponent() const noexcept {
         auto typeID = CMP_t::getComponentTypeID();
         auto found = m_components.find(typeID);
         if (found != end(m_components)) return dynamic_cast<const CMP_t*>(found->second);
@@ -26,7 +26,7 @@ struct Entity_t {
     }
 
     template <typename CMP_t>
-    CMP_t* getComponent() {
+    CMP_t* getComponent() noexcept {
         auto cmp = const_cast<const Entity_t*>(this)->getComponent<CMP_t>();
         return const_cast<CMP_t*>(cmp);
     }

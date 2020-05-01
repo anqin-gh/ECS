@@ -8,6 +8,7 @@ namespace ECS {
 struct AbstractComponent_t {
     virtual ~AbstractComponent_t() = default;
 
+protected:
     template <typename CMP_t>
     static ComponentTypeID_t getComponentTypeID() noexcept {
         static ComponentTypeID_t typeID{++nextTypeID};
@@ -26,7 +27,7 @@ protected:
     {}
 
 public:
-    static ComponentTypeID_t getComponentTypeID() noexcept {
+    constexpr static ComponentTypeID_t getComponentTypeID() noexcept {
         return AbstractComponent_t::getComponentTypeID<CMP_t>();
     }
 

@@ -17,7 +17,7 @@ struct InputSystem_t {
         ptc_process_events();
 
         for( auto& inp : ctx.template getComponents<InputComponent_t>() ) {
-            if (auto* e = ctx.template getEntityByID( inp.getBelongingEntityID() )) {
+            if (auto* e = ctx.getEntityByID( inp.getBelongingEntityID() )) {
                 if (auto* phy = e->template getComponent<PhysicsComponent_t>()) {
                     phy->vx = phy->vy = 0;
                     if(ms_keyboard.isKeyPressed( inp.key_left   )) phy->vx = -1;

@@ -27,7 +27,7 @@ struct RenderSystem_t {
         auto getScreenXY = [&](uint32_t x, uint32_t y) { return screen + m_w * y + x; };
 
         auto drawEntity = [&](const auto& ren) {
-            if (auto* e = ctx.template getEntityByID(ren.getBelongingEntityID())) {
+            if (auto* e = ctx.getEntityByID(ren.getBelongingEntityID())) {
                 if (auto* phy = e->template getComponent<PhysicsComponent_t>()) {
                     auto screen = getScreenXY(phy->x, phy->y);
                     auto sprite_it = begin(ren.sprite);

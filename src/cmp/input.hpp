@@ -1,7 +1,4 @@
 #pragma once
-#include <iostream>
-#include <cstdint>
-
 #include <cmp/component.hpp>
 #include <X11/keysym.h>
 #include <X11/X.h>

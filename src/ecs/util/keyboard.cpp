@@ -21,8 +21,9 @@ void Keyboard_t::keyReleased(KeySym k) noexcept {
 
 Keyboard_t::KeyboardItr
 Keyboard_t::getIterator(KeySym k) noexcept {
-    auto it = const_cast<const Keyboard_t*>(this)->getIterator(k);
-    return remove_constness(m_pressed_keys, *it);
+    if (auto it = const_cast<const Keyboard_t*>(this)->getIterator(k))
+        return remove_constness(m_pressed_keys, *it);
+    return {};
 }
 
 Keyboard_t::KeyboardConstItr

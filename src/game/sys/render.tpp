@@ -1,6 +1,5 @@
 #include <algorithm>
-
-#include <game/sys/render.hpp>
+#include "render.hpp"
 
 template<typename GameCTX_t>
 RenderSystem_t<GameCTX_t>::RenderSystem_t(uint32_t w, uint32_t h)
@@ -38,18 +37,44 @@ void RenderSystem_t<GameCTX_t>::drawAllEntities(GameCTX_t& ctx) const {
 }
 
 template<typename GameCTX_t>
-void RenderSystem_t<GameCTX_t>::renderSpriteWithClipping(const RenderComponent_t& ren, const PhysicsComponent_t& phy) const {
-    auto getScreenXY = [&](uint32_t x, uint32_t y) { return m_framebuffer.get() + m_w * y + x; };
+constexpr void RenderSystem_t<GameCTX_t>::renderSpriteWithClipping(const RenderComponent_t& ren, const PhysicsComponent_t& phy) const noexcept {
+   // Drawing coordinates and size
+    auto [ x, w, left_off ] = calculateClipping(phy.x, ren.w, m_w);
+    auto [ y, h, up_off   ] = calculateClipping(phy.y, ren.h, m_h);
 
-    auto screen = getScreenXY(phy.x, phy.y);
-    auto sprite_it = begin(ren.sprite);
-    for(uint32_t y = 0; y < ren.h; ++y) {
-        for(uint32_t x = 0; x < ren.w; ++x) {
-            if (*sprite_it & 0xFF000000)
+    // Render the entity
+    auto getScreenXY = [&](uint32_t x, uint32_t y) { return m_framebuffer.get() + m_w * y + x; };
+    auto screen = getScreenXY(x, y);
+    auto sprite_it = begin(ren.sprite) + up_off * ren.w + left_off;
+    for(uint32_t y = 0; y < h; ++y) {
+        for(uint32_t x = 0; x < w; ++x) {
+            if (*sprite_it & 0xFF000000)    // Draw only if transparency != 0
                 *screen = *sprite_it;
             ++sprite_it;
             ++screen;
         }
-        screen += m_w - ren.w;
+        screen += m_w - w;
+        sprite_it += ren.w - w;
     }
 }
+
+template<typename GameCTX_t>
+constexpr auto RenderSystem_t<GameCTX_t>::calculateClipping(uint32_t spritePos, uint32_t size, uint32_t lim) const noexcept {
+    uint32_t clippedPos     { spritePos };
+    uint32_t clippedSize    { size };
+    uint32_t offset         { 0 };
+
+    if (spritePos >= lim) {
+        offset = 0 - spritePos;
+        if (offset < size) {
+            clippedPos = 0;
+            clippedSize -= offset;
+        }
+    } else if (spritePos + size >= lim) {
+        uint32_t otherSideOffset = spritePos + size - lim;
+        if (otherSideOffset < size)
+            clippedSize -= otherSideOffset;
+    }
+
+    return std::tuple{ clippedPos, clippedSize, offset };
+};

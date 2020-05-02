@@ -8,8 +8,11 @@ struct RenderSystem_t {
     ~RenderSystem_t();
 
     bool update(GameCTX_t& ctx) const;
+
+private:
     void drawAllEntities(GameCTX_t& ctx) const;
-    void renderSpriteWithClipping(const RenderComponent_t& ren, const PhysicsComponent_t& phy) const;
+    constexpr void renderSpriteWithClipping(const RenderComponent_t& ren, const PhysicsComponent_t& phy) const noexcept;
+    constexpr auto calculateClipping(uint32_t spritePos, uint32_t size, uint32_t lim) const noexcept;
 
 private:
     static constexpr uint32_t kR = 0x00FF0000;

@@ -30,10 +30,10 @@ ECS::Entity_t& createEntity(ECS::EntityManager_t& man, uint32_t x, uint32_t y, c
     rn.loadFromFile(filename);
 
     auto& cl = man.addComponent<ColliderComponent_t>(e);
-    cl.box.x_left  = 0;
-    cl.box.x_right = rn.w;
-    cl.box.y_up    = 0;
-    cl.box.y_down  = rn.h;
+    cl.box.x_left  = 10;
+    cl.box.x_right = rn.w - 10;
+    cl.box.y_up    = 10;
+    cl.box.y_down  = rn.h - 10;
 
     return e;
 }

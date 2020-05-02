@@ -33,8 +33,8 @@ void SpawnSystem_t<GameCTX_t>::spawnDeVerdad(GameCTX_t& ctx, uint32_t x, uint32_
     e.addComponent(rn);
 
     auto& cl = ctx.template addComponent<ColliderComponent_t>(e);
-    cl.box.x_left  = 0;
-    cl.box.x_right = rn.w;
-    cl.box.y_up    = 0;
-    cl.box.y_down  = rn.h;
+    cl.box.x_left  = 10;
+    cl.box.x_right = rn.w - 10;
+    cl.box.y_up    = 10;
+    cl.box.y_down  = rn.h - 10;
 }

@@ -30,27 +30,26 @@ bool RenderSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
 
 template<typename GameCTX_t>
 void RenderSystem_t<GameCTX_t>::drawAllEntities(GameCTX_t& ctx) const {
-    auto screen = m_framebuffer.get();
+    const auto& renCmps = ctx.template getComponents<RenderComponent_t>();
+    for (const auto& ren : renCmps) {
+        if (auto* phy = ctx.template getRequiredComponent<PhysicsComponent_t>(ren))
+            renderSpriteWithClipping(ren, *phy);
+    }
+}
 
-    auto getScreenXY = [&](uint32_t x, uint32_t y) { return screen + m_w * y + x; };
+template<typename GameCTX_t>
+void RenderSystem_t<GameCTX_t>::renderSpriteWithClipping(const RenderComponent_t& ren, const PhysicsComponent_t& phy) const {
+    auto getScreenXY = [&](uint32_t x, uint32_t y) { return m_framebuffer.get() + m_w * y + x; };
 
-    auto drawEntity = [&](const auto& ren) {
-        if (auto* e = ctx.getEntityByID(ren.getBelongingEntityID())) {
-            if (auto* phy = e->template getComponent<PhysicsComponent_t>()) {
-                auto screen = getScreenXY(phy->x, phy->y);
-                auto sprite_it = begin(ren.sprite);
-                for(uint32_t y = 0; y < ren.h; ++y) {
-                    for(uint32_t x = 0; x < ren.w; ++x) {
-                        if (*sprite_it & 0xFF000000)
-                            *screen = *sprite_it;
-                        ++sprite_it;
-                        ++screen;
-                    }
-                    screen += m_w - ren.w;
-                }
-            }
+    auto screen = getScreenXY(phy.x, phy.y);
+    auto sprite_it = begin(ren.sprite);
+    for(uint32_t y = 0; y < ren.h; ++y) {
+        for(uint32_t x = 0; x < ren.w; ++x) {
+            if (*sprite_it & 0xFF000000)
+                *screen = *sprite_it;
+            ++sprite_it;
+            ++screen;
         }
-    };
-    auto& renCmps = ctx.template getComponents<RenderComponent_t>();
-    for_each(begin(renCmps), end(renCmps), drawEntity);
+        screen += m_w - ren.w;
+    }
 }

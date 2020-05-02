@@ -7,8 +7,9 @@ struct RenderSystem_t {
     explicit RenderSystem_t(uint32_t w, uint32_t h);
     ~RenderSystem_t();
 
-    void drawAllEntities(GameCTX_t& ctx) const;
     bool update(GameCTX_t& ctx) const;
+    void drawAllEntities(GameCTX_t& ctx) const;
+    void renderSpriteWithClipping(const RenderComponent_t& ren, const PhysicsComponent_t& phy) const;
 
 private:
     static constexpr uint32_t kR = 0x00FF0000;

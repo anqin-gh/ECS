@@ -34,7 +34,7 @@ struct Entity_t {
 private:
     inline static EntityID_t nextID{0};
     const EntityID_t ID{++nextID};
-    UMap_t<ComponentTypeID_t, AbstractComponent_t*> m_components;
+    UMap_t<ComponentTypeID_t, Component_t*> m_components;
 };
 
 } // namespace ECS

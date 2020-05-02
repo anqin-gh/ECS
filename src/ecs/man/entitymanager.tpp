@@ -33,4 +33,18 @@ Entity_t* EntityManager_t::getEntityByID(EntityID_t eid) {
     return const_cast<Entity_t*>(e);
 }
 
+template <typename CMP_t>
+const CMP_t* EntityManager_t::getRequiredComponent(const Component_t& cmp) const {
+    if (auto* e = getEntityByID(cmp.getBelongingEntityID()))
+        return e->template getComponent<CMP_t>();
+    return nullptr;
+}
+
+template <typename CMP_t>
+CMP_t* EntityManager_t::getRequiredComponent(const Component_t& cmp) {
+    auto reqCmp = const_cast<const EntityManager_t*>(this)->getRequiredComponent<CMP_t>(cmp);
+    return const_cast<CMP_t*>(reqCmp);
+}
+
+
 } // namespace ECS

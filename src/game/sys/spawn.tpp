@@ -10,21 +10,13 @@ void SpawnSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
     for (auto& spw : ctx.template getComponents<SpawnerComponent_t>()) {
         auto elapsed{clk::now() - spw.last_spawn_time};
         if (spw.to_be_spawned > 0 && elapsed > spw.spawn_interval) {
-            if (auto* phy = getRequiredComponent(ctx, spw)) {
+            if (auto* phy = ctx.template getRequiredComponent<PhysicsComponent_t>(spw)) {
                 spawnDeVerdad(ctx, phy->x, phy->y, "assets/blade.png");
                 --spw.to_be_spawned;
                 spw.last_spawn_time = clk::now();
             }
         }
     }
-}
-
-template <typename GameCTX_t>
-PhysicsComponent_t*
-SpawnSystem_t<GameCTX_t>::getRequiredComponent(GameCTX_t& ctx, const SpawnerComponent_t& spw) const {
-    if (auto* e = ctx.getEntityByID(spw.getBelongingEntityID()))
-        return e->template getComponent<PhysicsComponent_t>();
-    return nullptr;
 }
 
 template <typename GameCTX_t>

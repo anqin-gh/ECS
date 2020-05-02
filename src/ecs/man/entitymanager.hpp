@@ -25,6 +25,12 @@ struct EntityManager_t {
     template<typename CMP_t>
           Vec_t<CMP_t>& getComponents()       { return m_components.getComponents<CMP_t>(); }
 
+	template <typename CMP_t>
+	const CMP_t* getRequiredComponent(const Component_t& cmp) const;
+
+	template <typename CMP_t>
+	CMP_t* getRequiredComponent(const Component_t& cmp);
+
 private:
     static constexpr std::size_t kNUM_INITIAL_ENTITIES{1000};
     Vec_t<Entity_t> m_entities{};

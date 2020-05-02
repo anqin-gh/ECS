@@ -1,4 +1,5 @@
 #include <game/cmp/collider.hpp>
+#include <game/cmp/physics.hpp>
 #include "collision.hpp"
 
 template<typename GameCTX_t>
@@ -9,7 +10,7 @@ CollisionSystem_t<GameCTX_t>::CollisionSystem_t(uint32_t w, uint32_t h)
 template<typename GameCTX_t>
 bool CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
     for(auto& col : ctx.template getComponents<ColliderComponent_t>()) {
-        if (auto* phy = getRequiredComponent(ctx, col)) {
+        if (auto* phy = ctx.template getRequiredComponent<PhysicsComponent_t>(col)) {
 
             // Convert to screen coordinates
             auto xl{phy->x + col.box.x_left};
@@ -23,12 +24,4 @@ bool CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
         }
     }
     return true;
-}
-
-template<typename GameCTX_t>
-PhysicsComponent_t*
-CollisionSystem_t<GameCTX_t>::getRequiredComponent(GameCTX_t& ctx, const ColliderComponent_t& col) const {
-    if (auto* e = ctx.getEntityByID(col.getBelongingEntityID()))
-        return e->template getComponent<PhysicsComponent_t>();
-    return nullptr;
 }

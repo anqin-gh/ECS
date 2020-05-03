@@ -29,7 +29,11 @@ int main() {
         entityFactory.createBlade(290, 160);
         entityFactory.createBlade(100,  10);
         entityFactory.createPlayer(10,  10);
-        entityFactory.createSpawner(200, 150);
+        entityFactory.createSpawner(200, 150, 
+            [&](const auto& spw) {
+                if (auto* phy = entityMan.getRequiredComponent<PhysicsComponent_t>(spw))
+                    entityFactory.createBlade(phy->x, phy->y);
+            });
 
         // Systems
         const RenderSystem_t<ECS::EntityManager_t> render{kSCRWIDTH, kSCRHEIGHT};

@@ -10,7 +10,7 @@ struct SpawnerComponent_t : public ECS::ComponentBase_t<SpawnerComponent_t> {
         : ComponentBase_t(eid)
     {}
 
-    std::function<void(uint32_t x, uint32_t y)> spawningAction{};
+    std::function<void(const SpawnerComponent_t&)> spawningAction{};
     
     using clk = std::chrono::steady_clock;
     clk::time_point last_spawn_time{clk::now()};

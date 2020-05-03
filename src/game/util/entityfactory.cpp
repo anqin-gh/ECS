@@ -50,7 +50,10 @@ ECS::Entity_t&
 EnitityFactory_t::createSpawner(uint32_t x, uint32_t y) {
     auto& e   = m_ent_man.createEntity();
 
-    [[maybe_unused]]auto& sp = m_ent_man.addComponent<SpawnerComponent_t>(e);
+    auto& spw = m_ent_man.addComponent<SpawnerComponent_t>(e);
+    spw.spawningAction = [&](uint32_t x, uint32_t y) {
+        createBlade(x, y);
+    };
 
     auto& ph  = m_ent_man.addComponent<PhysicsComponent_t>(e);
     ph.x = x; ph.y = y;

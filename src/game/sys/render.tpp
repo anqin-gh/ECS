@@ -46,8 +46,8 @@ constexpr void RenderSystem_t<GameCTX_t>::renderSpriteWithClipping(const RenderC
     auto [ y, h, up_off   ] = calculateClipping(phy.y, ren.h, m_h);
 
     // Render the entity
-    auto getScreenXY = [&](uint32_t x, uint32_t y) { return m_framebuffer.get() + m_w * y + x; };
-    auto screen = getScreenXY(x, y);
+    auto getScreenPos = [&](uint32_t x, uint32_t y) { return m_framebuffer.get() + m_w * y + x; };
+    auto screen = getScreenPos(x, y);
     auto sprite_it = begin(ren.sprite) + up_off * ren.w + left_off;
     for(uint32_t y = 0; y < h; ++y) {
         for(uint32_t x = 0; x < w; ++x) {

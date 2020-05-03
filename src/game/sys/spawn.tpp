@@ -12,30 +12,10 @@ void SpawnSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
         auto elapsed{clk::now() - spw.last_spawn_time};
         if (spw.to_be_spawned > 0 && elapsed > spw.spawn_interval) {
             if (auto* phy = ctx.template getRequiredComponent<PhysicsComponent_t>(spw)) {
-                spawnDeVerdad(ctx, phy->x, phy->y, "assets/blade.png");
+                spw.spawningAction(phy->x, phy->y);
                 --spw.to_be_spawned;
                 spw.last_spawn_time = clk::now();
             }
         }
     }
-}
-
-template <typename GameCTX_t>
-void SpawnSystem_t<GameCTX_t>::spawnDeVerdad(GameCTX_t& ctx, uint32_t x, uint32_t y, const std::string_view filename) const {
-    auto& e   = ctx.createEntity();
-
-    auto& ph  = ctx.template addComponent<PhysicsComponent_t>(e);
-    ph.x = x; ph.y = y;
-    ph.vx = ph.vy = 1;
-    e.addComponent(ph);
-
-    auto& rn = ctx.template addComponent<RenderComponent_t>(e);
-    rn.loadFromFile(filename);
-    e.addComponent(rn);
-
-    auto& cl = ctx.template addComponent<ColliderComponent_t>(e);
-    cl.box.x_left  = 10;
-    cl.box.x_right = rn.w - 10;
-    cl.box.y_up    = 10;
-    cl.box.y_down  = rn.h - 10;
 }

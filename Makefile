@@ -38,7 +38,7 @@ LIBS		:= $(LIBDIR)/picoPNG/libpicopng.a $(LIBDIR)/tinyPTC/libtinyptc.a -lX11
 INCDIRS		:= -I$(SRC) -I$(LIBDIR)
 
 ifdef DEBUG
-	CPPFLAGS += -g
+	CPPFLAGS += -g -DDEBUG
 else
 	CPPFLAGS += -O3
 endif

@@ -35,6 +35,11 @@ struct EnitityFactory_t {
         cl.box.x_right = 20;
         cl.box.y_up    = 0;
         cl.box.y_down  = 20;
+        
+        #ifdef DEBUG
+            auto& rn = m_ent_man.addComponent<RenderComponent_t>(e);
+            rn.loadFromFile("assets/blade.png");
+        #endif
 
         return e;
     }

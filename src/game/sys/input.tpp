@@ -1,3 +1,5 @@
+#pragma once
+#include <game/cmp/input.hpp>
 #include <game/cmp/physics.hpp>
 #include "input.hpp"
 

@@ -1,3 +1,4 @@
+#pragma once
 #include <game/cmp/physics.hpp>
 #include "physics.hpp"
 

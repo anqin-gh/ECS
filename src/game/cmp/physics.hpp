@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-
 #include <ecs/cmp/component.hpp>
 
 struct PhysicsComponent_t : public ECS::ComponentBase_t<PhysicsComponent_t> {

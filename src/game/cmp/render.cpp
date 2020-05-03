@@ -1,6 +1,5 @@
 #include <fstream>
 #include <tuple>
-
 #include <game/cmp/render.hpp>
 #include <picoPNG/src/picopng.hpp>
 

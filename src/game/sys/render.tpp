@@ -1,4 +1,7 @@
+#pragma once
 #include <algorithm>
+#include <game/cmp/physics.hpp>
+#include <game/cmp/render.hpp>
 #include "render.hpp"
 
 template<typename GameCTX_t>
@@ -77,4 +80,4 @@ constexpr auto RenderSystem_t<GameCTX_t>::calculateClipping(uint32_t spritePos, 
     }
 
     return std::tuple{ clippedPos, clippedSize, offset };
-};
+}

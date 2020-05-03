@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-
 #include <ecs/util/typealiases.hpp>
 
 namespace ECS {

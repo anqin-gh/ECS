@@ -2,6 +2,9 @@
 #include <cstdint>
 #include <memory>
 
+struct RenderComponent_t;
+struct PhysicsComponent_t;
+
 template<typename GameCTX_t>
 struct RenderSystem_t {
     explicit RenderSystem_t(uint32_t w, uint32_t h);

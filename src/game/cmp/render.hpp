@@ -1,7 +1,6 @@
 #pragma once
 #include <string_view>
 #include <cstdint>
-
 #include <ecs/cmp/component.hpp>
 #include <ecs/util/typealiases.hpp>
 

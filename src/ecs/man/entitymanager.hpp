@@ -48,17 +48,17 @@ struct EntityManager_t {
     template<typename CMP_t>
           Vec_t<CMP_t>& getComponents()       { return m_components.getComponents<CMP_t>(); }
 
-	template <typename CMP_t>
-	const CMP_t* getRequiredComponent(const Component_t& cmp) const {
+	template <typename ReqCMP_t, typename CMP_t>
+	const ReqCMP_t* getRequiredComponent(const CMP_t& cmp) const {
 		if (auto* e = getEntityByID(cmp.getBelongingEntityID()))
-			return e->template getComponent<CMP_t>();
+			return e->template getComponent<ReqCMP_t>();
 		return nullptr;
 	}
 
-	template <typename CMP_t>
-	CMP_t* getRequiredComponent(const Component_t& cmp) {
-		auto reqCmp = const_cast<const EntityManager_t*>(this)->getRequiredComponent<CMP_t>(cmp);
-		return const_cast<CMP_t*>(reqCmp);
+	template <typename ReqCMP_t, typename CMP_t>
+	ReqCMP_t* getRequiredComponent(const CMP_t& cmp) {
+		auto reqCmp = const_cast<const EntityManager_t*>(this)->getRequiredComponent<ReqCMP_t>(cmp);
+		return const_cast<ReqCMP_t*>(reqCmp);
 	}
 
 private:

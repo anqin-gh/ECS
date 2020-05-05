@@ -20,8 +20,8 @@ bool CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
             auto yd{phy->y + col.box.y_down};
 
             // Detect collisions
-            if (xl > m_w || xr > m_w) { phy->x -= phy->vx; phy->vx = -phy->vx; }
-            if (yu > m_h || yd > m_h) { phy->y -= phy->vy; phy->vy = -phy->vy; }
+            if (xl >= m_w || xr >= m_w) { phy->x -= phy->vx; phy->vx = -phy->vx; }
+            if (yu >= m_h || yd >= m_h) { phy->y -= phy->vy; phy->vy = -phy->vy; }
         }
     }
     return true;

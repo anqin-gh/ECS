@@ -1,3 +1,4 @@
+#include <game/cmp/debug.hpp>
 #include <game/cmp/input.hpp>
 #include <game/cmp/render.hpp>
 #include "entityfactory.hpp"
@@ -21,6 +22,8 @@ EnitityFactory_t::createEntity(uint32_t x, uint32_t y, const std::string_view fi
     cl.box.x_right = rn.w - 10;
     cl.box.y_up    = 10;
     cl.box.y_down  = rn.h - 10;
+
+    m_ent_man.addComponent<DebugComponent_t>(e);
 
     return e;
 }

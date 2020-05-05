@@ -37,10 +37,12 @@ int main() {
 
         // Systems
         const RenderSystem_t<ECS::EntityManager_t> render{kSCRWIDTH, kSCRHEIGHT};
-        PhysicsSystem_t<ECS::EntityManager_t> physics;
-        CollisionSystem_t<ECS::EntityManager_t> collision{kSCRWIDTH, kSCRHEIGHT};
-        InputSystem_t<ECS::EntityManager_t> input;
-        SpawnSystem_t<ECS::EntityManager_t> spawn;
+        render.setDebug(true);
+
+        const PhysicsSystem_t<ECS::EntityManager_t> physics;
+        const CollisionSystem_t<ECS::EntityManager_t> collision{kSCRWIDTH, kSCRHEIGHT};
+        const InputSystem_t<ECS::EntityManager_t> input;
+        const SpawnSystem_t<ECS::EntityManager_t> spawn;
 
         using clk = std::chrono::steady_clock;
         // main loop
@@ -50,6 +52,7 @@ int main() {
             physics.update(entityMan);
             collision.update(entityMan);
             spawn.update(entityMan);
+
             auto elapsed = clk::now() - lastTime;
             if(elapsed < kSPF)
                 std::this_thread::sleep_for( kSPF - elapsed );

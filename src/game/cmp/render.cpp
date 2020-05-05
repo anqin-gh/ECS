@@ -23,7 +23,6 @@ auto RenderComponent_t::loadPNGFileIntoVector(const std::string_view filename) {
     return std::tuple{ dw, dh, pixels };
 }
 
-
 void RenderComponent_t::loadFromFile(const std::string_view filename) {
     auto [ dw, dh, pixels ] = loadPNGFileIntoVector(filename);
     w = dw; h = dh;

@@ -8,6 +8,7 @@
 
 #include <ecs/man/entitymanager.hpp>
 #include <game/sys/collision.tpp>
+#include <game/sys/health.tpp>
 #include <game/sys/input.tpp>
 #include <game/sys/physics.tpp>
 #include <game/sys/render.tpp>
@@ -40,6 +41,7 @@ int main() {
 
         const PhysicsSystem_t<ECS::EntityManager_t> physics;
         const CollisionSystem_t<ECS::EntityManager_t> collision{kSCRWIDTH, kSCRHEIGHT};
+        const HealthSystem_t<ECS::EntityManager_t> health;
         const InputSystem_t<ECS::EntityManager_t> input;
         const SpawnSystem_t<ECS::EntityManager_t> spawn;
 
@@ -51,6 +53,7 @@ int main() {
             input.update(entityMan);
             physics.update(entityMan);
             collision.update(entityMan);
+            health.update(entityMan);
             spawn.update(entityMan);
 
             auto elapsed = clk::now() - lastTime;

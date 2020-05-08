@@ -1,4 +1,5 @@
 #include <game/cmp/debug.hpp>
+#include <game/cmp/health.hpp>
 #include <game/cmp/input.hpp>
 #include <game/cmp/render.hpp>
 #include "entityfactory.hpp"
@@ -47,6 +48,8 @@ EnitityFactory_t::createPlayer(uint32_t x, uint32_t y) {
         children_level1.emplace_back(20, 46, 147, 158);
         children_level1.emplace_back(ren->w - 46, ren->w - 20, 147, 158);
     }
+    
+    auto* hlth = e.getComponent<HealthComponent_t>();
 
     return e;
 }

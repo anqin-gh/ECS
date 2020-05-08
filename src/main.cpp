@@ -1,4 +1,6 @@
 #include <chrono>
+#include <iostream>
+#include <exception>
 #include <thread>
 
 #include <cstdint>
@@ -57,6 +59,8 @@ int main() {
             if(elapsed < kSPF)
                 std::this_thread::sleep_for( kSPF - elapsed );
         }
+    } catch(std::exception& e) {
+        std::cerr << e.what() << '\n';
     } catch(...) {
         std::puts("Capturada");
     }

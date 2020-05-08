@@ -30,7 +30,7 @@ EnitityFactory_t::createEntity(uint32_t x, uint32_t y, const std::string_view fi
 
 ECS::Entity_t&
 EnitityFactory_t::createPlayer(uint32_t x, uint32_t y) {
-    auto& e = createEntity(x, y, "assets/jerry.png");
+    auto& e = createEntity(x, y, "assets/characters/Yellow_Front1.png");
     m_ent_man.addComponent<InputComponent_t>(e);
     return e;
 }

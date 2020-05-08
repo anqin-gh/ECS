@@ -1,4 +1,5 @@
 #include <fstream>
+#include <exception>
 #include <tuple>
 #include <game/cmp/render.hpp>
 #include <picoPNG/src/picopng.hpp>
@@ -12,7 +13,7 @@ auto RenderComponent_t::loadPNGFileIntoVector(const std::string_view filename) {
     unsigned long dw, dh;
 
     std::ifstream file{filename.data(), std::ios::binary};
-    // if(!file.is_open()) return; // TODO: error handling
+    if(!file.is_open()) throw std::runtime_error("Wrong path at " + std::string(filename.data())); // TODO: error handling
 
     ECS::Vec_t<unsigned char> file_vector{
             std::istreambuf_iterator<char>{file}

@@ -48,8 +48,9 @@ int main() {
 
         using clk = std::chrono::steady_clock;
         // main loop
-        while(render.update(entityMan)) {
+        while( !input.isKeyPressed(XK_Escape) ) {
             auto lastTime = clk::now();
+            render.update(entityMan);
             input.update(entityMan);
             physics.update(entityMan);
             collision.update(entityMan);

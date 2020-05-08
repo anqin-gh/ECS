@@ -6,7 +6,7 @@
 #include "spawn.hpp"
 
 template <typename GameCTX_t>
-void SpawnSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
+void SpawnSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     using clk = std::chrono::steady_clock;
     for (auto& spw : ctx.template getComponents<SpawnerComponent_t>()) {
         auto elapsed{clk::now() - spw.last_spawn_time};

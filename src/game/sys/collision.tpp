@@ -9,7 +9,7 @@ CollisionSystem_t<GameCTX_t>::CollisionSystem_t(uint32_t w, uint32_t h)
 {}
 
 template<typename GameCTX_t>
-bool CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
+void CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     auto& col_cmp_vec = ctx.template getComponents<ColliderComponent_t>();
 
     for (auto& col : col_cmp_vec) col.box.collided = false;
@@ -27,7 +27,6 @@ bool CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
             }
         }
     }
-    return true;
 }
 
 using namespace std;

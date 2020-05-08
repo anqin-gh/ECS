@@ -10,11 +10,11 @@ struct RenderSystem_t {
     explicit RenderSystem_t(uint32_t w, uint32_t h);
     ~RenderSystem_t();
 
-    bool update(GameCTX_t& ctx) const;
+    void update(GameCTX_t& ctx) const noexcept;
     constexpr void setDebug(bool v) const noexcept { m_debug = v; }
 
 private:
-    void drawAllEntities(GameCTX_t& ctx) const;
+    void drawAllEntities(GameCTX_t& ctx) const noexcept;
     constexpr void renderSpriteWithClipping(const RenderComponent_t& ren, const PhysicsComponent_t& phy) const noexcept;
     constexpr uint32_t* getScreenPos(uint32_t x, uint32_t y) const noexcept { return m_framebuffer.get() + m_w * y + x; };
     constexpr auto calculateClipping(uint32_t spritePos, uint32_t size, uint32_t lim) const noexcept;

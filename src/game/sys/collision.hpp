@@ -4,7 +4,7 @@
 template<typename GameCTX_t>
 struct CollisionSystem_t {
     explicit CollisionSystem_t(uint32_t w, uint32_t h);
-    bool update(GameCTX_t& ctx) const;
+    void update(GameCTX_t& ctx) const noexcept;
 
 private:
     constexpr void checkBoundaryCollisions(const ColliderComponent_t& col, PhysicsComponent_t& phy) const noexcept;

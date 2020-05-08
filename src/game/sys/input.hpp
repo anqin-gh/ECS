@@ -5,11 +5,12 @@ template<typename GameCTX_t>
 struct InputSystem_t {
     explicit InputSystem_t();
 
-    bool update(GameCTX_t& ctx) const;
+    void update(GameCTX_t& ctx) const noexcept;
+    bool isKeyPressed(KeySym k) const noexcept;
 
 private:
-    static void onKeyPress(KeySym k)   { ms_keyboard.keyPressed(k); }
-    static void onKeyRelease(KeySym k) { ms_keyboard.keyReleased(k); }
+    static void onKeyPress(KeySym k)   noexcept { ms_keyboard.keyPressed(k); }
+    static void onKeyRelease(KeySym k) noexcept { ms_keyboard.keyReleased(k); }
 
     inline static ECS::Keyboard_t ms_keyboard{};
 };

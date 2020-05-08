@@ -3,10 +3,9 @@
 #include "physics.hpp"
 
 template<typename GameCTX_t>
-bool PhysicsSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
+void PhysicsSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     for(auto& phy : ctx.template getComponents<PhysicsComponent_t>()) {
         phy.x += phy.vx;
         phy.y += phy.vy;
     }
-    return true;
 }

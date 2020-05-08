@@ -20,7 +20,7 @@ RenderSystem_t<GameCTX_t>::~RenderSystem_t() {
 }
 
 template<typename GameCTX_t>
-bool RenderSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
+void RenderSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     auto screen = m_framebuffer.get();
     auto size = m_w * m_h;
     
@@ -30,13 +30,11 @@ bool RenderSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const {
     if (m_debug) drawDebugLines(ctx);
 
     ptc_update(screen);
-
-    return !ptc_process_events();
 }
 
 template<typename GameCTX_t>
 void
-RenderSystem_t<GameCTX_t>::drawAllEntities(GameCTX_t& ctx) const {
+RenderSystem_t<GameCTX_t>::drawAllEntities(GameCTX_t& ctx) const noexcept {
     for (const auto& ren : ctx.template getComponents<RenderComponent_t>()) {
         if (auto* phy = ctx.template getRequiredComponent<PhysicsComponent_t>(ren)) {
             renderSpriteWithClipping(ren, *phy);

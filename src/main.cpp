@@ -6,9 +6,6 @@
 #include <cstdint>
 #include <cstdio>
 
-extern "C" {
-    #include <tinyPTC/src/tinyptc.h>
-}
 #include <ecs/man/entitymanager.hpp>
 #include <game/sys/collision.tpp>
 #include <game/sys/input.tpp>

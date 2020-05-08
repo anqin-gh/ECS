@@ -13,7 +13,7 @@ $(2) : $(3) $(4)
 endef
 
 # $(1) : Source file
-define C20
+define C2O
 $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst $(SRC)%,$(OBJ)%,$(1))))
 endef
 
@@ -25,6 +25,7 @@ endef
 ######################################################################
 ### CONFIG
 ######################################################################
+UNAME   	:= $(shell uname)
 APP 		:= libpicopng.a
 CFLAGS 		:= -Wall -Wextra -pedantic
 CPPFLAGS	:= $(CFLAGS) -std=c++14
@@ -36,17 +37,40 @@ RANLIB		:= ranlib
 MKDIR		:= mkdir -p
 SRC			:= src
 OBJ			:= obj
-rm			:= rm
+RM			:= rm
+
+ifeq ($(UNAME),Linux)
+	OS := linux
+else 
+   OS := windows
+endif
+
+ifdef CROSSWIN
+	C:=x86_64-w64-mingw32-gcc
+	CPP:=x86_64-w64-mingw32-g++
+   	CPPFLAGS += -DCROSSWIN
+	CPPFLAGS += -DCROSSWIN
+	AR:=x86_64-w64-mingw32-ar
+	RANLIB:=x86_64-w64-mingw32-ranlib
+	OS:=windows
+endif
 
 ifdef DEBUG
+   CPPFLAGS += -g 
 	CPPFLAGS += -g
-else
-	CPPFLAGS += -O3
+   CPPFLAGS += -g 
+	CFLAGS  += -g
+else ifdef SANITIZE
+	CPPFLAGS += -fsanitize=address -fno-omit-frame-pointer -O1 -g
+	CFLAGS  += -fsanitize=address -fno-omit-frame-pointer -O1 -g
+else 
+   CPPFLAGS += -O3
+   CFLAGS  += -O3
 endif
 
 ALLCPPS		:= $(shell find $(SRC) -type f -iname *.cpp)
 ALLCS		:= $(shell find $(SRC) -type f -iname *.c)
-ALLOBJ		:= $(foreach F,$(ALLCS) $(ALLCPPS),$(call C20,$(F)))
+ALLOBJ		:= $(foreach F,$(ALLCS) $(ALLCPPS),$(call C2O,$(F)))
 SUBDIRS		:= $(shell find $(SRC) -type d)
 OBJSUBDIRS	:= $(patsubst $(SRC)%,$(OBJ)%,$(SUBDIRS))
 
@@ -56,8 +80,8 @@ $(APP) : $(OBJSUBDIRS) $(ALLOBJ)
 	$(RANLIB) $(APP)
 
 # Generate rules for all objects
-$(foreach F,$(ALLCPPS),$(eval $(call COMPILE,$(CPP),$(call C20,$(F)),$(F),$(call C2H,$(F)),$(CPPFLAGS))))
-$(foreach F,$(ALLCS),$(eval $(call COMPILE,$(C),$(call C20,$(F)),$(F),$(call C2H,$(F)),$(CFLAGS))))
+$(foreach F,$(ALLCPPS),$(eval $(call COMPILE,$(CPP),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CPPFLAGS))))
+$(foreach F,$(ALLCS),$(eval $(call COMPILE,$(C),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CFLAGS))))
 
 $(OBJSUBDIRS) :
 	$(MKDIR) $(OBJSUBDIRS)

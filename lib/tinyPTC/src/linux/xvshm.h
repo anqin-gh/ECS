@@ -1,25 +1,24 @@
-/*
- * TinyPTC x11 v0.7.3 XVideo with Shared Memory Extension target
- * Copyright (C) 2002 Fred Howell <foohoo@shaw.ca>
- * Copyright (C) 2002 Alessandro Gatti <a.gatti@tiscali.it>
- *
- * http://www.sourceforge.net/projects/tinyptc/
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- */
+//
+// This file is part of tinyPTC, UA version 2019
+// Based on TinyPTC-X11-0.7.3 XVideo with Shared Memory Extension target
+// Copyright (C) 2002 by Fred Howell (foohoo@shaw.ca)
+// Copyright (C) 2002 by Alessandro Gatti (a.gatti@tiscali.it)
+// Copyright (C) 2019 by Francisco J. Gallego-Durán (@FranGallegoBR)
+// 
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+//
 
 #ifndef __PTC_XVSHM_H
 #define __PTC_XVSHM_H
@@ -48,12 +47,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
-void 	ptc_set_on_keypress  ( void (*onkeypress)  (KeySym) );
-void 	ptc_set_on_keyrelease( void (*onkeyrelease)(KeySym) );
-int 	ptc_open(const char *title, int width, int height);
-int 	ptc_update(void *buffer);
-void 	ptc_close(void);
-int 	ptc_process_events(void);
+int ptc_open(const char *title, int width, int height);
+int ptc_update(void *buffer);
+void ptc_close(void);
+int ptc_process_events(void);
 
 #ifdef __PTC_MMX__
 void convert_yv12_mmx(void *pin, void *py, void *pu, void *pv, int stride);
@@ -73,8 +70,6 @@ void convert_yv12_c(void *pin, unsigned char *py, unsigned char *pu,
 
 #ifdef __PTC_FROM_SOURCE
 
-static void (*ptc_onkeypress)  (KeySym);
-static void (*ptc_onkeyrelease)(KeySym);
 static Display *ptc_display;
 static int ptc_screen, ptc_screen_width, ptc_screen_height, ptc_viewport_width,
     ptc_viewport_height, ptc_depth;

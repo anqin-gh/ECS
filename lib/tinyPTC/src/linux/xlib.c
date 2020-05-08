@@ -1,63 +1,50 @@
-/*
- * TinyPTC x11 v0.7.3 X Shared Memory Extension target
- * Copyright (C) 2000-2002 Alessandro Gatti <a.gatti@tiscali.it>
- *
- * http://www.sourceforge.net/projects/tinyptc/
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- */
+//
+// This file is part of tinyPTC, UA version 2019
+// Based on TinyPTC-X11-0.7.3 Raw XLib target
+// Copyright (C) 2002 by Alessandro Gatti (a.gatti@tiscali.it)
+// Copyright (C) 2019 by Francisco J. Gallego-Durán (@FranGallegoBR)
+// 
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+//
 
 /* #includes */
 
 #include "tinyptc.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/extensions/XShm.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
 
-#ifdef __PTC_XSHM__
+#ifdef __PTC_XLIB__
 
 #define __PTC_FROM_SOURCE
 
-#include "xshm.h"
+#include "xlib.h"
 
-/* Keypress event processing callbacks */
+/* Open the screen */
+
 void ptc_do_nothing(KeySym a) {
 }
 
-void ptc_set_on_keypress  ( void (*onkeypress)  (KeySym) ) {
-  ptc_onkeypress = onkeypress;
-}
-void ptc_set_on_keyrelease( void (*onkeyrelease)(KeySym) ) {
-  ptc_onkeyrelease = onkeyrelease;
-}
-
-/* Open the screen */
 int ptc_open(const char *title, int width, int height) {
   /* Open a display on the current root window */
   ptc_display = XOpenDisplay(NULL);
   if (ptc_display == NULL) {
     return PTC_FAILURE;
   }
-
   // Set PTC keypress and release
   ptc_onkeypress   = ptc_do_nothing;
   ptc_onkeyrelease = ptc_do_nothing;
@@ -122,11 +109,6 @@ int ptc_open(const char *title, int width, int height) {
     return PTC_FAILURE;
   }
 #endif /* __PTC_ENABLE_CONVERSIONS__ */
-  /* Check for XShm extension */
-  if (!XShmQueryExtension(ptc_display)) {
-    XCloseDisplay(ptc_display);
-    return PTC_FAILURE;
-  }
   /* Get screen dimensions */
   ptc_screen_width = DisplayWidth(ptc_display, ptc_screen);
   ptc_screen_height = DisplayHeight(ptc_display, ptc_screen);
@@ -153,7 +135,7 @@ int ptc_open(const char *title, int width, int height) {
   /* Set the window's name */
   XStoreName(ptc_display, ptc_window, title);
   /* Tell the server to report only keypress-related events */
-  XSelectInput(ptc_display, ptc_window, KeyPressMask | KeyReleaseMask);
+  XSelectInput(ptc_display, ptc_window, KeyPressMask | KeyReleaseMask );
   /* Initialize window's sizehint definition structure */
   ptc_window_sizehints.flags = PPosition | PMinSize | PMaxSize;
   ptc_window_sizehints.x = 0;
@@ -172,33 +154,9 @@ int ptc_open(const char *title, int width, int height) {
   XFlush(ptc_display);
   /* Get the default graphic context */
   ptc_window_gc = DefaultGC(ptc_display, ptc_screen);
-  /* Create an XShmImage */
-  ptc_ximage = XShmCreateImage(ptc_display, ptc_visual, ptc_depth, ZPixmap, 0,
-                               &ptc_shm_segment, width, height);
-  /* Get a shared segment */
-  ptc_shm_segment.shmid =
-      shmget(IPC_PRIVATE, ptc_ximage->bytes_per_line * ptc_ximage->height,
-             IPC_CREAT | 0777);
-  /* Initialize XShmImage data buffer pointer */
-  ptc_ximage->data = (char *)shmat(ptc_shm_segment.shmid, 0, 0);
-  /* Save buffer address */
-  ptc_shm_segment.shmaddr = ptc_ximage->data;
-  /* Put the segment in read/write */
-  ptc_shm_segment.readOnly = False;
-  /* Attach the segment to the display */
-  if (!XShmAttach(ptc_display, &ptc_shm_segment)) {
-    /* Destroy the image */
-    XDestroyImage(ptc_ximage);
-    /* Detach the buffer from the segment */
-    shmdt(ptc_shm_segment.shmaddr);
-    /* Remove the segment */
-    shmctl(ptc_shm_segment.shmid, IPC_RMID, 0);
-    /* Destroy the window */
-    XDestroyWindow(ptc_display, ptc_window);
-    /* Close the display */
-    XCloseDisplay(ptc_display);
-    return PTC_FAILURE;
-  }
+  /* Create an XImage */
+  ptc_ximage = XCreateImage(ptc_display, CopyFromParent, ptc_depth, ZPixmap, 0,
+                            NULL, width, height, 32, width * ptc_output_pitch);
   /* Save windowsize values */
   ptc_viewport_width = width;
   ptc_viewport_height = height;
@@ -211,8 +169,8 @@ int ptc_update(void *buffer) {
   char *ptc_buffer;
 
   ptc_buffer = (char *)buffer;
-  /* Copy buffer data into the XShmImage */
 #ifdef __PTC_ENABLE_CONVERSIONS__
+  ptc_ximage->data = ptc_buffer;
   ptc_source_index = 0;
   ptc_destination_index = 0;
   /* Convert the image line by line */
@@ -226,20 +184,33 @@ int ptc_update(void *buffer) {
     ptc_destination_index += ptc_viewport_width * ptc_output_pitch;
   }
 #else
-  /* Blit the image */
-  memcpy(ptc_ximage->data, buffer,
-         ptc_viewport_width * ptc_viewport_height * sizeof(int));
+  /* Set XImage's data buffer value with the supplied buffer pointer */
+  ptc_ximage->data = ptc_buffer;
 #endif /* __PTC_ENABLE_CONVERSIONS__ */
-  /* Synchronize the event queue */
-  XSync(ptc_display, 0);
   /* Put the buffer on the window */
-  XShmPutImage(ptc_display, ptc_window, ptc_window_gc, ptc_ximage, 0, 0, 0, 0,
-               ptc_viewport_width, ptc_viewport_height, False);
-
+  XPutImage(ptc_display, ptc_window, ptc_window_gc, ptc_ximage, 0, 0, 0, 0,
+            ptc_viewport_width, ptc_viewport_height);
+  /* Check for incoming events */
+  XFlush(ptc_display);
+  /* Process incoming events */
+//  if (ptc_process_events()) {
+//#ifdef __PTC_CLEANUP_CALLBACK__
+//    ptc_cleanup_callback();
+//#endif /* __PTC_CLEANUP_CALLBACK__ */
+//    ptc_close();
+//    exit(0);
+//  }
   return PTC_SUCCESS;
 }
 
 /* Process events */
+
+void ptc_set_on_keypress  ( void (*onkeypress)  (KeySym) ) {
+  ptc_onkeypress = onkeypress;
+}
+void ptc_set_on_keyrelease( void (*onkeyrelease)(KeySym) ) {
+  ptc_onkeyrelease = onkeyrelease;
+}
 
 
 int ptc_process_events(void) {
@@ -274,14 +245,10 @@ int ptc_process_events(void) {
 /* Close the screen */
 
 void ptc_close(void) {
-  /* Detach the segment from the display */
-  XShmDetach(ptc_display, &ptc_shm_segment);
-  /* Destroy the XShmImage */
+  /* Restore XImage's buffer pointer */
+  ptc_ximage->data = NULL;
+  /* Destroy the XImage */
   XDestroyImage(ptc_ximage);
-  /* Detach the buffer from the segment */
-  shmdt(ptc_shm_segment.shmaddr);
-  /* Remove the segment */
-  shmctl(ptc_shm_segment.shmid, IPC_RMID, 0);
   /* Close the window */
   XDestroyWindow(ptc_display, ptc_window);
   /* Close the display */
@@ -292,4 +259,4 @@ void ptc_close(void) {
   }
 }
 
-#endif /* __PTC_XSHM__ */
+#endif /* __PTC_XLIB__ */

@@ -3,6 +3,14 @@
 #include <game/cmp/physics.hpp>
 #include "input.hpp"
 
+extern "C" {
+    #ifdef CROSSWIN
+        #include <tinyPTC/src/windows/tinyptc.h>
+    #else
+        #include <tinyPTC/src/linux/tinyptc.h>
+    #endif
+}
+
 template<typename GameCTX_t>
 InputSystem_t<GameCTX_t>::InputSystem_t() {
     ptc_set_on_keypress( onKeyPress );

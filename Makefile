@@ -25,6 +25,7 @@ endef
 ######################################################################
 ### CONFIG
 ######################################################################
+UNAME   	:= $(shell uname)
 APP 		:= game
 CFLAGS 		:= -Wall -Wextra -pedantic
 CPPFLAGS	:= $(CFLAGS) -std=c++17
@@ -37,10 +38,29 @@ LIBDIR		:= lib
 LIBS		:= $(LIBDIR)/picoPNG/libpicopng.a $(LIBDIR)/tinyPTC/libtinyptc.a -lX11
 INCDIRS		:= -I$(SRC) -I$(LIBDIR)
 
+ifeq ($(UNAME),Linux)
+	OS := linux
+else 
+   OS := windows
+endif
+
+ifdef CROSSWIN
+	C:=x86_64-w64-mingw32-gcc
+	CPP:=x86_64-w64-mingw32-g++
+	AR:=x86_64-w64-mingw32-ar
+	RANLIB:=x86_64-w64-mingw32-ranlib
+	OS:=windows
+endif
+
 ifdef DEBUG
-	CPPFLAGS += -g -DDEBUG
-else
-	CPPFLAGS += -O3
+	CPPFLAGS += -g 
+	CFLAGS  += -g
+else ifdef SANITIZE
+	CPPFLAGS += -fsanitize=address -fno-omit-frame-pointer -O1 -g
+	CFLAGS  += -fsanitize=address -fno-omit-frame-pointer -O1 -g
+else 
+   CPPFLAGS += -O3
+   CFLAGS  += -O3
 endif
 
 ALLCPPS		:= $(shell find $(SRC) -type f -iname *.cpp)
@@ -50,7 +70,7 @@ SUBDIRS		:= $(shell find $(SRC) -type d)
 OBJSUBDIRS	:= $(patsubst $(SRC)%,$(OBJ)%,$(SUBDIRS))
 
 $(APP) : $(OBJSUBDIRS) $(ALLOBJ)
-	$(CPP) -o $(APP) $(ALLOBJ) $(LIBS)
+	$(CPP) -o $(APP) $(ALLOBJ) $(LIBS) $(CPPFLAGS)
 
 # Generate rules for all objects
 $(foreach F,$(ALLCPPS),$(eval $(call COMPILE,$(CPP),$(call C20,$(F)),$(F),$(call C2H,$(F)),$(CPPFLAGS) $(INCDIRS))))

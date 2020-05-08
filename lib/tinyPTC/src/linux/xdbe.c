@@ -1,66 +1,50 @@
-/*
- * TinyPTC x11 v0.7.3 Raw XLib target
- * Copyright (C) 2000-2002 Alessandro Gatti <a.gatti@tiscali.it>
- *
- * http://www.sourceforge.net/projects/tinyptc/
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- */
+//
+// This file is part of tinyPTC, UA version 2019
+// Based on TinyPTC-X11-0.7.3 X Double Buffer Extension target
+// Copyright (C) 2002 by Alessandro Gatti (a.gatti@tiscali.it)
+// Copyright (C) 2019 by Francisco J. Gallego-Durán (@FranGallegoBR)
+// 
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+//
 
 /* #includes */
 
 #include "tinyptc.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/Xdbe.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __PTC_XLIB__
+#ifdef __PTC_XDBE__
 
 #define __PTC_FROM_SOURCE
 
-#include "xlib.h"
-
-/* Keypress event processing callbacks */
-void ptc_do_nothing(KeySym a) {
-}
-
-void ptc_set_on_keypress  ( void (*onkeypress)  (KeySym) ) {
-  ptc_onkeypress = onkeypress;
-}
-void ptc_set_on_keyrelease( void (*onkeyrelease)(KeySym) ) {
-  ptc_onkeyrelease = onkeyrelease;
-}
+#include "xdbe.h"
 
 /* Open the screen */
-int ptc_open(const char *title, int width, int height) {
+
+int ptc_open(char *title, int width, int height) {
   /* Open a display on the current root window */
   ptc_display = XOpenDisplay(NULL);
   if (ptc_display == NULL) {
     return PTC_FAILURE;
   }
-  // Set PTC keypress and release
-  ptc_onkeypress   = ptc_do_nothing;
-  ptc_onkeyrelease = ptc_do_nothing;
-
   /* Get the default screen associated with the previously opened display */
   ptc_screen = DefaultScreen(ptc_display);
-  /* Get the default visual */
-  ptc_visual = DefaultVisual(ptc_display, ptc_screen);
   /* Get screen bitdepth */
   ptc_depth = DefaultDepth(ptc_display, ptc_screen);
   /* Get a pointer to the supported pixmap formats */
@@ -77,6 +61,8 @@ int ptc_open(const char *title, int width, int height) {
   }
   XFree(ptc_pixmap_formats);
 #ifdef __PTC_ENABLE_CONVERSIONS__
+  /* Get the default visual */
+  ptc_visual = DefaultVisual(ptc_display, ptc_screen);
   /* Check if a converter is avaliable */
   ptc_convert =
       ptc_request_converter(ptc_converter_depth, ptc_visual->red_mask,
@@ -117,6 +103,42 @@ int ptc_open(const char *title, int width, int height) {
     return PTC_FAILURE;
   }
 #endif /* __PTC_ENABLE_CONVERSIONS__ */
+
+  /* Check for Xdbe extension */
+  if (!XdbeQueryExtension(ptc_display, &ptc_dbe_major_version,
+                          &ptc_dbe_minor_version)) {
+    XCloseDisplay(ptc_display);
+    return PTC_FAILURE;
+  }
+  /* Get Xdbe visual info */
+  ptc_dbe_drawables = 0;
+  ptc_dbe_visual_infoptr =
+      XdbeGetVisualInfo(ptc_display, &ptc_root_window, &ptc_dbe_drawables);
+  if (ptc_dbe_visual_infoptr == NULL) {
+    XCloseDisplay(ptc_display);
+    return PTC_FAILURE;
+  }
+  /* Choose the best visual */
+  ptc_dbe_best_performance = INT_MIN;
+  ptc_dbe_best_visual = 0;
+  ptc_dbe_visualptr = ptc_dbe_visual_infoptr->visinfo;
+  for (ptc_dbe_counter = 0; ptc_dbe_counter < ptc_dbe_visual_infoptr->count;
+       ptc_dbe_counter++) {
+    if (ptc_dbe_visualptr[ptc_dbe_counter].depth == ptc_depth) {
+      if (ptc_dbe_visualptr[ptc_dbe_counter].perflevel >
+          ptc_dbe_best_performance) {
+        ptc_dbe_best_performance = ptc_dbe_visualptr[ptc_dbe_counter].perflevel;
+        ptc_dbe_best_visual = ptc_dbe_visualptr[ptc_dbe_counter].visual;
+      }
+    }
+  }
+  /* Deallocate visual info data */
+  XdbeFreeVisualInfo(ptc_dbe_visual_infoptr);
+  /* No suitable visuals */
+  if (ptc_dbe_best_visual == 0) {
+    XCloseDisplay(ptc_display);
+    return PTC_FAILURE;
+  }
   /* Get screen dimensions */
   ptc_screen_width = DisplayWidth(ptc_display, ptc_screen);
   ptc_screen_height = DisplayHeight(ptc_display, ptc_screen);
@@ -138,12 +160,12 @@ int ptc_open(const char *title, int width, int height) {
   /* Create the window */
   ptc_window = XCreateWindow(
       ptc_display, ptc_root_window, ptc_x_position, ptc_y_position, width,
-      height, 0, ptc_depth, InputOutput, ptc_visual,
+      height, 0, ptc_depth, InputOutput, (Visual *)&ptc_dbe_best_visual,
       CWBackPixel | CWBorderPixel | CWBackingStore, &ptc_window_attributes);
   /* Set the window's name */
   XStoreName(ptc_display, ptc_window, title);
   /* Tell the server to report only keypress-related events */
-  XSelectInput(ptc_display, ptc_window, KeyPressMask | KeyReleaseMask );
+  XSelectInput(ptc_display, ptc_window, KeyPressMask | KeyReleaseMask);
   /* Initialize window's sizehint definition structure */
   ptc_window_sizehints.flags = PPosition | PMinSize | PMaxSize;
   ptc_window_sizehints.x = 0;
@@ -164,7 +186,12 @@ int ptc_open(const char *title, int width, int height) {
   ptc_window_gc = DefaultGC(ptc_display, ptc_screen);
   /* Create an XImage */
   ptc_ximage = XCreateImage(ptc_display, CopyFromParent, ptc_depth, ZPixmap, 0,
-                            NULL, width, height, 32, width * ptc_output_pitch);
+                            NULL, width, height, 32, width * 4);
+  /* Allocate the back buffers */
+  ptc_dbe_backbuffer =
+      XdbeAllocateBackBufferName(ptc_display, ptc_window, XdbeBackground);
+  ptc_dbe_swapinfo.swap_window = ptc_window;
+  ptc_dbe_swapinfo.swap_action = XdbeBackground;
   /* Save windowsize values */
   ptc_viewport_width = width;
   ptc_viewport_height = height;
@@ -195,12 +222,25 @@ int ptc_update(void *buffer) {
   /* Set XImage's data buffer value with the supplied buffer pointer */
   ptc_ximage->data = ptc_buffer;
 #endif /* __PTC_ENABLE_CONVERSIONS__ */
-  /* Put the buffer on the window */
-  XPutImage(ptc_display, ptc_window, ptc_window_gc, ptc_ximage, 0, 0, 0, 0,
-            ptc_viewport_width, ptc_viewport_height);
+  /* Put the buffer on the back buffer */
+  XPutImage(ptc_display, ptc_dbe_backbuffer, ptc_window_gc, ptc_ximage, 0, 0, 0,
+            0, ptc_viewport_width, ptc_viewport_height);
+  /* Start the swap operation */
+  XdbeBeginIdiom(ptc_display);
+  /* Swap */
+  XdbeSwapBuffers(ptc_display, &ptc_dbe_swapinfo, 1);
+  /* End the swap operation */
+  XdbeEndIdiom(ptc_display);
   /* Check for incoming events */
   XFlush(ptc_display);
-
+  /* Process incoming events */
+  if (ptc_process_events()) {
+#ifdef __PTC_CLEANUP_CALLBACK__
+    ptc_cleanup_callback();
+#endif /* __PTC_CLEANUP_CALLBACK__ */
+    ptc_close();
+    exit(0);
+  }
   return PTC_SUCCESS;
 }
 
@@ -213,22 +253,16 @@ int ptc_process_events(void) {
   if (XPending(ptc_display)) {
     /* Get the next event in queue */
     XNextEvent(ptc_display, &ptc_xevent);
-    /* Check if it's a key event */
-    if (ptc_xevent.type == KeyPress || ptc_xevent.type == KeyRelease) {
+    /* Check if it's a keypress event */
+    if (ptc_xevent.type == KeyPress) {
       /* Get the keysym */
       ptc_keysym = XLookupKeysym(&ptc_xevent.xkey, 0);
-
-      if (ptc_xevent.type == KeyPress) {
-        ptc_onkeypress(ptc_keysym);
-        /* Check if the key pressed was a function one */
-        if ((ptc_keysym >> 8) == __PTC_FUNCTION_KEY__) {
-          /* Check if it was the escape key */
-          if ((ptc_keysym & 0xFF) == __PTC_ESCAPE_KEY__) {
-            return PTC_SUCCESS;
-          }
+      /* Check if the key pressed was a function one */
+      if ((ptc_keysym >> 8) == __PTC_FUNCTION_KEY__) {
+        /* Check if it was the escape key */
+        if ((ptc_keysym & 0xFF) == __PTC_ESCAPE_KEY__) {
+          return PTC_SUCCESS;
         }
-      } else {
-        ptc_onkeyrelease(ptc_keysym);
       }
     }
   }
@@ -238,6 +272,8 @@ int ptc_process_events(void) {
 /* Close the screen */
 
 void ptc_close(void) {
+  /* Deallocate the back buffer */
+  XdbeDeallocateBackBufferName(ptc_display, ptc_dbe_backbuffer);
   /* Restore XImage's buffer pointer */
   ptc_ximage->data = NULL;
   /* Destroy the XImage */
@@ -252,4 +288,4 @@ void ptc_close(void) {
   }
 }
 
-#endif /* __PTC_XLIB__ */
+#endif /* __PTC_XDBE__ */

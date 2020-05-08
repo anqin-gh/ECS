@@ -102,24 +102,28 @@ RenderSystem_t<GameCTX_t>::drawDebugLines(const GameCTX_t& ctx) const noexcept {
 
         if (col && phy) {
             drawBoxLines(col->box, phy->x, phy->y, dbg.color_lines);
-            drawFullBox(col->box, phy->x, phy->y, dbg.color_filling);
+            if (col->box.collided)
+                drawFullBox(col->box, phy->x, phy->y, dbg.color_filling);
         }
     }
 }
 
 template<typename GameCTX_t>
 constexpr void 
-RenderSystem_t<GameCTX_t>::drawBoxLines(const BoundingBox_t& box, uint32_t x, uint32_t y, uint32_t color) const noexcept {
+RenderSystem_t<GameCTX_t>::drawBoxLines(const BoundingBoxNode_t& box, uint32_t x, uint32_t y, uint32_t color) const noexcept {
     // Convert to screen coordinates
-    auto xl { x + box.x_left };
-    auto xr { x + box.x_right };
-    auto yu { y + box.y_up };
-    auto yd { y + box.y_down };
+    auto xl { x + box.box_root.x_left };
+    auto xr { x + box.box_root.x_right };
+    auto yu { y + box.box_root.y_up };
+    auto yd { y + box.box_root.y_down };
 
     drawClippedHorizontalLine(xl, xr, yu, color);
     drawClippedHorizontalLine(xl, xr, yd, color);
     drawClippedVerticalLine  (yu, yd, xl, color);
     drawClippedVerticalLine  (yu, yd, xr, color);
+
+    for (const auto& child : box.children)
+        drawBoxLines(child, x, y, color >> 1);
 }
 
 template<typename GameCTX_t>
@@ -149,17 +153,20 @@ RenderSystem_t<GameCTX_t>::drawLine(uint32_t* screen, uint32_t size, uint32_t st
 
 template<typename GameCTX_t>
 constexpr void
-RenderSystem_t<GameCTX_t>::drawFullBox(const BoundingBox_t& box, uint32_t x, uint32_t y, uint32_t color) const noexcept {
+RenderSystem_t<GameCTX_t>::drawFullBox(const BoundingBoxNode_t& box, uint32_t x, uint32_t y, uint32_t color) const noexcept {
     // Convert to screen coordinates
-    auto xl { x + box.x_left };
-    auto xr { x + box.x_right };
-    auto yu { y + box.y_up };
-    auto yd { y + box.y_down };
+    auto xl { x + box.box_root.x_left };
+    auto xr { x + box.box_root.x_right };
+    auto yu { y + box.box_root.y_up };
+    auto yd { y + box.box_root.y_down };
 
     auto [real_x, real_w, off_hori ] = calculateClipping(xl, xr - xl, m_w);
     auto [real_y, real_h, off_vert ] = calculateClipping(yu, yd - yu, m_h);
 
     drawSquare(real_x, real_y, real_w, real_h, color);
+
+    for (const auto& child : box.children)
+        drawFullBox(child, x, y, color >> 1);
 }
 
 template<typename GameCTX_t>

@@ -99,18 +99,18 @@ RenderSystem_t<GameCTX_t>::drawDebugData(const GameCTX_t& ctx) const noexcept {
         auto* phy = ctx.template getRequiredComponent<PhysicsComponent_t>(dbg);
         auto* col = ctx.template getRequiredComponent<ColliderComponent_t>(dbg);
 
-        if (col && phy) drawBoxTree(col->box, phy->x, phy->y, dbg);
+        if (col && phy) drawBoxTree(col->box, phy->x, phy->y, dbg.color_filling);
     }
 }
 
 template<typename GameCTX_t>
 constexpr void 
-RenderSystem_t<GameCTX_t>::drawBoxTree(const BoundingBoxNode_t& box, uint32_t x, uint32_t y, const DebugComponent_t& dbg) const noexcept {
-    if (box.collided) drawFullBox(box, x, y, dbg.color_filling >> 1);
-    else              drawBoxLines(box, x, y, dbg.color_lines >> 1);
+RenderSystem_t<GameCTX_t>::drawBoxTree(const BoundingBoxNode_t& box, uint32_t x, uint32_t y, uint32_t color) const noexcept {
+    if (box.collided) drawFullBox(box, x, y, color);
+    else              drawBoxLines(box, x, y, color);
 
     for (const auto& child : box.children)
-        drawBoxTree(child, x, y, dbg);
+        drawBoxTree(child, x, y, color >> 1);
 }
 
 template<typename GameCTX_t>

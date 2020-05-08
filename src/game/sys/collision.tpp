@@ -65,14 +65,14 @@ CollisionSystem_t<GameCTX_t>::checkEntityCollision(uint32_t x1, uint32_t y1, Bou
 
     // Check interval intersection in both axes
     if (isIntervalIntersecting(xl1, xr1, xl2, xr2) && isIntervalIntersecting(yu1, yd1, yu2, yd2)) {
+
+        box1.collided = true;
+        box2.collided = true;
         
         if ( !box1.children.empty() ) {
             for (auto& child : box1.children) checkEntityCollision(x1, y1, child, x2, y2, box2);
         } else if ( !box2.children.empty() ) {
             for (auto& child : box2.children) checkEntityCollision(x1, y1, box1, x2, y2, child);
-        } else {
-            box1.collided = true;
-            box2.collided = true;
         }
     }
 }

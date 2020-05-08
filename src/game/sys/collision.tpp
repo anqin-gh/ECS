@@ -12,7 +12,7 @@ template<typename GameCTX_t>
 void CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     auto& col_cmp_vec = ctx.template getComponents<ColliderComponent_t>();
 
-    for (auto& col : col_cmp_vec) col.box.collided = false;
+    for (auto& col : col_cmp_vec) setUncollided(col.box);
 
     for (std::size_t i = 0; i < col_cmp_vec.size(); ++i) {
         auto& col1 = col_cmp_vec[i];
@@ -21,12 +21,22 @@ void CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
 
             for (std::size_t j = i+1; j < col_cmp_vec.size(); ++j) {
                 auto& col2 = col_cmp_vec[j];
+
+                if ( !(col1.mask & col2.mask) ) continue;
+
                 if (auto* phy2 = ctx.template getRequiredComponent<PhysicsComponent_t>(col2)) {
-                    checkEntityCollision(phy1->x, phy1->y, col1, phy2->x, phy2->y, col2);
+                    checkEntityCollision(phy1->x, phy1->y, col1.box, phy2->x, phy2->y, col2.box);
                 }
             }
         }
     }
+}
+
+template<typename GameCTX_t>
+constexpr void
+CollisionSystem_t<GameCTX_t>::setUncollided(BoundingBoxNode_t& box_node) const noexcept {
+    box_node.collided = false;
+    for (auto& child : box_node.children) setUncollided(child);
 }
 
 using namespace std;
@@ -42,20 +52,27 @@ CollisionSystem_t<GameCTX_t>::checkBoundaryCollisions(const ColliderComponent_t&
 
 template<typename GameCTX_t>
 constexpr void
-CollisionSystem_t<GameCTX_t>::checkEntityCollision(uint32_t x1, uint32_t y1, ColliderComponent_t& col1, uint32_t x2, uint32_t y2, ColliderComponent_t& col2) const noexcept {
-    auto [ xl1, xr1, yu1, yd1 ] = convert2ScreenCoordinates(col1.box.box_root, x1, y1);
-    auto [ xl2, xr2, yu2, yd2 ] = convert2ScreenCoordinates(col2.box.box_root, x2, y2);
+CollisionSystem_t<GameCTX_t>::checkEntityCollision(uint32_t x1, uint32_t y1, BoundingBoxNode_t& box1, uint32_t x2, uint32_t y2, BoundingBoxNode_t& box2) const noexcept {
+    auto [ xl1, xr1, yu1, yd1 ] = convert2ScreenCoordinates(box1.box_root, x1, y1);
+    auto [ xl2, xr2, yu2, yd2 ] = convert2ScreenCoordinates(box2.box_root, x2, y2);
 
+    // Check interval intersection in a generic axis
     auto isIntervalIntersecting = [](uint32_t l1, uint32_t r1, uint32_t l2, uint32_t r2) {
         if (l2 > r1 || l1 > r2) return false;
         return true;
     };
 
-    if (    isIntervalIntersecting(xl1, xr1, xl2, xr2)
-        &&  isIntervalIntersecting(yu1, yd1, yu2, yd2))
-    {
-        col1.box.collided = true;
-        col2.box.collided = true;
+    // Check interval intersection in both axes
+    if (isIntervalIntersecting(xl1, xr1, xl2, xr2) && isIntervalIntersecting(yu1, yd1, yu2, yd2)) {
+        
+        if ( !box1.children.empty() ) {
+            for (auto& child : box1.children) checkEntityCollision(x1, y1, child, x2, y2, box2);
+        } else if ( !box2.children.empty() ) {
+            for (auto& child : box2.children) checkEntityCollision(x1, y1, box1, x2, y2, child);
+        } else {
+            box1.collided = true;
+            box2.collided = true;
+        }
     }
 }
 

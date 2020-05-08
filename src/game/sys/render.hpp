@@ -18,7 +18,8 @@ private:
     constexpr void renderSpriteWithClipping(const RenderComponent_t& ren, const PhysicsComponent_t& phy) const noexcept;
     constexpr uint32_t* getScreenPos(uint32_t x, uint32_t y) const noexcept { return m_framebuffer.get() + m_w * y + x; };
     constexpr auto calculateClipping(uint32_t spritePos, uint32_t size, uint32_t lim) const noexcept;
-    void drawDebugLines(const GameCTX_t& ctx) const noexcept;
+    constexpr void drawDebugData(const GameCTX_t& ctx) const noexcept;
+    constexpr void drawBoxTree(const BoundingBoxNode_t& box, uint32_t x, uint32_t y,  const DebugComponent_t& dbg) const noexcept;
     constexpr void drawBoxLines(const BoundingBoxNode_t& box, uint32_t x, uint32_t y, uint32_t color) const noexcept;
     constexpr void drawClippedHorizontalLine(uint32_t x1, uint32_t x2, uint32_t y, uint32_t color) const noexcept;
     constexpr void drawClippedVerticalLine(uint32_t x1, uint32_t x2, uint32_t y, uint32_t color) const noexcept;

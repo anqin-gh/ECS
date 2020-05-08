@@ -27,7 +27,7 @@ void RenderSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     std::fill(screen, screen + size, colors::kBlack);
     drawAllEntities(ctx);
 
-    if (m_debug) drawDebugLines(ctx);
+    if (m_debug) drawDebugData(ctx);
 
     ptc_update(screen);
 }
@@ -92,17 +92,54 @@ RenderSystem_t<GameCTX_t>::calculateClipping(uint32_t pos, uint32_t size, uint32
 }
 
 template<typename GameCTX_t>
-void
-RenderSystem_t<GameCTX_t>::drawDebugLines(const GameCTX_t& ctx) const noexcept {
+constexpr void
+RenderSystem_t<GameCTX_t>::drawDebugData(const GameCTX_t& ctx) const noexcept {
     for (const auto& dbg : ctx.template getComponents<DebugComponent_t>()) {
         auto* phy = ctx.template getRequiredComponent<PhysicsComponent_t>(dbg);
         auto* col = ctx.template getRequiredComponent<ColliderComponent_t>(dbg);
 
-        if (col && phy) {
-            drawBoxLines(col->box, phy->x, phy->y, dbg.color_lines);
-            if (col->box.collided)
-                drawFullBox(col->box, phy->x, phy->y, dbg.color_filling);
+        if (col && phy) drawBoxTree(col->box, phy->x, phy->y, dbg);
+    }
+}
+
+template<typename GameCTX_t>
+constexpr void 
+RenderSystem_t<GameCTX_t>::drawBoxTree(const BoundingBoxNode_t& box, uint32_t x, uint32_t y, const DebugComponent_t& dbg) const noexcept {
+    if (box.collided) drawFullBox(box, x, y, dbg.color_filling >> 1);
+    else              drawBoxLines(box, x, y, dbg.color_lines >> 1);
+
+    for (const auto& child : box.children)
+        drawBoxTree(child, x, y, dbg);
+}
+
+template<typename GameCTX_t>
+constexpr void
+RenderSystem_t<GameCTX_t>::drawFullBox(const BoundingBoxNode_t& box, uint32_t x, uint32_t y, uint32_t color) const noexcept {
+    // Convert to screen coordinates
+    auto xl { x + box.box_root.x_left };
+    auto xr { x + box.box_root.x_right };
+    auto yu { y + box.box_root.y_up };
+    auto yd { y + box.box_root.y_down };
+
+    auto [real_x, real_w, off_hori ] = calculateClipping(xl, xr - xl, m_w);
+    auto [real_y, real_h, off_vert ] = calculateClipping(yu, yd - yu, m_h);
+
+    drawSquare(real_x, real_y, real_w, real_h, color);
+}
+
+template<typename GameCTX_t>
+constexpr void
+RenderSystem_t<GameCTX_t>::drawSquare(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color) const noexcept {
+    constexpr uint32_t pixel_with{1};
+
+    auto* screen = getScreenPos(x + pixel_with, y + pixel_with);
+
+    for(uint32_t y = 0; y < h - pixel_with; ++y) {
+        for (uint32_t x = 0; x < w - pixel_with; ++x) {
+            *screen = color;
+            ++screen;
         }
+        screen += m_w - w + pixel_with;
     }
 }
 
@@ -146,39 +183,5 @@ RenderSystem_t<GameCTX_t>::drawLine(uint32_t* screen, uint32_t size, uint32_t st
     for (uint32_t i = 0; i < size; ++i) {
         *screen = color;
         screen += stride;
-    }
-}
-
-template<typename GameCTX_t>
-constexpr void
-RenderSystem_t<GameCTX_t>::drawFullBox(const BoundingBoxNode_t& box, uint32_t x, uint32_t y, uint32_t color) const noexcept {
-    // Convert to screen coordinates
-    auto xl { x + box.box_root.x_left };
-    auto xr { x + box.box_root.x_right };
-    auto yu { y + box.box_root.y_up };
-    auto yd { y + box.box_root.y_down };
-
-    auto [real_x, real_w, off_hori ] = calculateClipping(xl, xr - xl, m_w);
-    auto [real_y, real_h, off_vert ] = calculateClipping(yu, yd - yu, m_h);
-
-    drawSquare(real_x, real_y, real_w, real_h, color);
-
-    for (const auto& child : box.children)
-        drawFullBox(child, x, y, color >> 1);
-}
-
-template<typename GameCTX_t>
-constexpr void
-RenderSystem_t<GameCTX_t>::drawSquare(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color) const noexcept {
-    constexpr uint32_t pixel_with{1};
-
-    auto* screen = getScreenPos(x + pixel_with, y + pixel_with);
-
-    for(uint32_t y = 0; y < h - pixel_with; ++y) {
-        for (uint32_t x = 0; x < w - pixel_with; ++x) {
-            *screen = color;
-            ++screen;
-        }
-        screen += m_w - w + pixel_with;
     }
 }

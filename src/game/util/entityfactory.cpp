@@ -35,22 +35,17 @@ EnitityFactory_t::createPlayer(uint32_t x, uint32_t y) {
     if (col && ren) {
         col->box.box_root = { 0, ren->w, 21, ren->h };  // outside box
         auto& children_level1 = col->box.children;
-        children_level1.reserve(3); // reserve for head, body & legs boxes
+        children_level1.reserve(7); // reserve for head, body & legs boxes
 
-        auto& head = children_level1.emplace_back(16, ren->w - 16,  25,  48);
-        head.children.emplace_back(37, ren->w - 37,  25,  48);
+        children_level1.emplace_back(37, ren->w - 37,  21,  30);    // top head box
+        children_level1.emplace_back(25, ren->w - 25,  30,  50);    // bottom head box
         
-        auto& body_box = children_level1.emplace_back(13, ren->w - 13,  48, 131);
-        auto& body_children = body_box.children;
-        body_children.reserve(3); // reserve for middle box & 2 arms
-        body_children.emplace_back(16, ren->w - 16, 51, 116);
-        body_children.emplace_back(ren->w - 16, ren->w - 5, 68, 123);
-        body_children.emplace_back(5, 16, 68, 123);
+        children_level1.emplace_back(16, ren->w - 16, 50, 147);     // central square
+        children_level1.emplace_back(ren->w - 16, ren->w, 68, 123); // right arm
+        children_level1.emplace_back(0, 16, 68, 123);               // left arm
 
-        auto& legs_box = children_level1.emplace_back(17, ren->w - 17, 131, 147);
-        legs_box.children.reserve(2);
-        legs_box.children.emplace_back(20, 46, 131, 158);
-        legs_box.children.emplace_back(ren->w - 46, ren->w - 20, 131, 158);
+        children_level1.emplace_back(20, 46, 147, 158);
+        children_level1.emplace_back(ren->w - 46, ren->w - 20, 147, 158);
     }
 
     return e;

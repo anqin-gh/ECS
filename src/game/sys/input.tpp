@@ -18,7 +18,8 @@ InputSystem_t<GameCTX_t>::InputSystem_t() {
 }
 
 template<typename GameCTX_t>
-void InputSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
+constexpr void
+InputSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     ptc_process_events();
 
     for( auto& inp : ctx.template getComponents<InputComponent_t>() ) {
@@ -33,6 +34,7 @@ void InputSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
 }
 
 template<typename GameCTX_t>
-bool InputSystem_t<GameCTX_t>::isKeyPressed(KeySym k) const noexcept {
+constexpr bool
+InputSystem_t<GameCTX_t>::isKeyPressed(KeySym k) const noexcept {
     return ms_keyboard.isKeyPressed(k);
 }

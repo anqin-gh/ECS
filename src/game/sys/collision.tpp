@@ -9,7 +9,8 @@ CollisionSystem_t<GameCTX_t>::CollisionSystem_t(uint32_t w, uint32_t h)
 {}
 
 template<typename GameCTX_t>
-void CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
+constexpr void
+CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     auto& col_cmp_vec = ctx.template getComponents<ColliderComponent_t>();
 
     for (auto& col : col_cmp_vec) setUncollided(col.box);

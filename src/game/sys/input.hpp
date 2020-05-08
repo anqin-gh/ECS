@@ -5,8 +5,8 @@ template<typename GameCTX_t>
 struct InputSystem_t {
     explicit InputSystem_t();
 
-    void update(GameCTX_t& ctx) const noexcept;
-    bool isKeyPressed(KeySym k) const noexcept;
+    constexpr void update(GameCTX_t& ctx) const noexcept;
+    constexpr bool isKeyPressed(KeySym k) const noexcept;
 
 private:
     static void onKeyPress(KeySym k)   noexcept { ms_keyboard.keyPressed(k); }

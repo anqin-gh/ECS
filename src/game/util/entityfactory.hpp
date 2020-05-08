@@ -31,6 +31,7 @@ struct EnitityFactory_t {
         ph.vx = 0; ph.vy = 1;
 
         auto& cl  = m_ent_man.addComponent<ColliderComponent_t>(e);
+        cl.mask = 0;
         cl.box.box_root = { 0, 20, 0, 20 };
 
         m_ent_man.addComponent<DebugComponent_t>(e);

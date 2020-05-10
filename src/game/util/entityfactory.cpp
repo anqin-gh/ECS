@@ -29,10 +29,11 @@ EnitityFactory_t::createEntity(uint32_t x, uint32_t y, const std::string_view fi
 ECS::Entity_t&
 EnitityFactory_t::createPlayer(uint32_t x, uint32_t y) {
     auto& e = createEntity(x, y, "assets/characters/Yellow_Front1.png");
-    m_ent_man.addComponent<InputComponent_t>(e);
+    
+    // m_ent_man.addComponent<InputComponent_t>(e);
 
-    auto* ren = e.getComponent<RenderComponent_t>();
-    auto* col = e.getComponent<ColliderComponent_t>();
+    auto* ren = m_ent_man.getComponentByEntityID<RenderComponent_t>(e.getID());
+    auto* col = m_ent_man.getComponentByEntityID<ColliderComponent_t>(e.getID());
     if (col && ren) {
         col->box.box_root = { 0, ren->w, 21, ren->h };  // outside box
         auto& children_level1 = col->box.children;
@@ -52,15 +53,19 @@ EnitityFactory_t::createPlayer(uint32_t x, uint32_t y) {
     auto& h_cmp = m_ent_man.addComponent<HealthComponent_t>(e);
     h_cmp.health = 5;
 
+    std::cout << "Player created with EID: " << e.getID() << std::endl;
+
     return e;
 }
 
 ECS::Entity_t&
 EnitityFactory_t::createBlade(uint32_t x, uint32_t y) {
     auto& e = createEntity(x, y, "assets/blade.png");
-    auto* phy = e.getComponent<PhysicsComponent_t>();
+    auto* phy = m_ent_man.getComponentByEntityID<PhysicsComponent_t>(e.getID());
     phy->vx = 1;
     m_ent_man.addComponent<HealthComponent_t>(e);
+
+    std::cout << "Blade created with EID: " << e.getID() << std::endl;
 
     return e;
 }

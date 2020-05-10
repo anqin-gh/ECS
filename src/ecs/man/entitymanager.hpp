@@ -21,6 +21,9 @@ struct EntityManager_t {
 
     template<typename CMP_t> const Vec_t<CMP_t>& getComponents() const noexcept;
     template<typename CMP_t> 	   Vec_t<CMP_t>& getComponents()       noexcept;
+    
+    template<typename CMP_t> const CMP_t* getComponentByEntityID(EntityID_t eid) const noexcept;
+    template<typename CMP_t> 	   CMP_t* getComponentByEntityID(EntityID_t eid)       noexcept;
 
 	template <typename ReqCMP_t, typename CMP_t> const ReqCMP_t* getRequiredComponent(const CMP_t& cmp) const noexcept;
 	template <typename ReqCMP_t, typename CMP_t> 	   ReqCMP_t* getRequiredComponent(const CMP_t& cmp)       noexcept;

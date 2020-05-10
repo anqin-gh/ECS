@@ -17,20 +17,18 @@ inline void
 EntityManager_t::destroyEntityByID(EntityID_t eid) {
     std::cout << "Entity[" << eid << "] is dead!\n";
     if (auto* entity = getEntityByID(eid)) {
-        for (auto& [ typeID, cmp ] : *entity) {
+        for (auto& [ typeID, _ ] : *entity) {
             m_components.deleteComponentByTypeIDAndEntityID(typeID, eid);
         }
-        auto found = find_if(begin(m_entities), end(m_entities), [eid](const Entity_t& e) {
+
+        auto found = std::find_if(begin(m_entities), end(m_entities), [eid](const Entity_t& e) {
             return e.getID() == eid;
         });
 
-        // auto& last_entity = *(end(m_entities)-1);
-        // for (auto& [ typeID, cmp ] : last_entity) {
-
-        // }
-
-        // std::iter_swap(found, end(m_entities)-1);
-        // m_entities.pop_back();
+        if (found != end(m_entities)) {   // TODO: Error management!!!
+            *found = m_entities.back();
+            m_entities.pop_back();
+        }
     }
 }
 
@@ -60,12 +58,13 @@ EntityManager_t::getEntityByID(EntityID_t eid) noexcept {
 template<typename CMP_t>
 CMP_t&
 EntityManager_t::addComponent(Entity_t& e) {
-    auto* eCmp = e.getComponent<CMP_t>();
-    if (eCmp) return *eCmp;
+    // Return component if it already exists
+    if (auto* cmp = m_components.template getComponentByEntityID<CMP_t>(e.getID()))
+        return *cmp;
 
     // Create component if it doesn't exist
-    auto& cmp = m_components.createComponent<CMP_t>( e.getID() );
-    e.addComponent(cmp);
+    auto& cmp = m_components.template createComponent<CMP_t>( e.getID() );
+    e.addBelongingComponent(cmp);
     return cmp;
 }
 
@@ -77,11 +76,19 @@ template<typename CMP_t>
 Vec_t<CMP_t>&
 EntityManager_t::getComponents() noexcept { return m_components.template getComponents<CMP_t>(); }
 
+template<typename CMP_t>
+const CMP_t*
+EntityManager_t::getComponentByEntityID(EntityID_t eid) const noexcept { return m_components.template getComponentByEntityID<CMP_t>(eid); }
+
+template<typename CMP_t>
+CMP_t*
+EntityManager_t::getComponentByEntityID(EntityID_t eid) noexcept { return m_components.template getComponentByEntityID<CMP_t>(eid); }
+
 template <typename ReqCMP_t, typename CMP_t>
 const ReqCMP_t* 
 EntityManager_t::getRequiredComponent(const CMP_t& cmp) const noexcept {
     if (auto* e = getEntityByID(cmp.getBelongingEntityID()))
-        return e->template getComponent<ReqCMP_t>();
+        return m_components.template getComponentByEntityID<ReqCMP_t>(e->getID());
     return nullptr;
 }
 

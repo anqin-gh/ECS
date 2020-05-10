@@ -11,7 +11,6 @@ constexpr void
 HealthSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     for (auto& h : ctx.template getComponents<HealthComponent_t>()) {
         if (const auto* col = ctx.template getRequiredComponent<ColliderComponent_t>(h)) {
-            // cout << "Health[EID: " << h.getBelongingEntityID() << ", CID: " << h.getID() << "] = " << h.health << endl;
             if (h.health && hasLeafNodeColided(col->box)) {
                 cout << "Remaining life of Entity[" << h.getBelongingEntityID() << "] = " << h.health -1<< endl;
                 if (--h.health == 0)

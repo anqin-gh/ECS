@@ -23,11 +23,12 @@ CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
             for (std::size_t j = i+1; j < col_cmp_vec.size(); ++j) {
                 auto& col2 = col_cmp_vec[j];
 
-                if ( !(col1.mask & col2.mask) ) continue;
-
-                if (auto* phy2 = ctx.template getRequiredComponent<PhysicsComponent_t>(col2)) {
-                    checkEntityCollision(phy1->x, phy1->y, col1.box, phy2->x, phy2->y, col2.box);
+                if ( col1.mask & col2.mask ) { // If collider are in the same layer
+                    if (auto* phy2 = ctx.template getRequiredComponent<PhysicsComponent_t>(col2)) {
+                        checkEntityCollision(phy1->x, phy1->y, col1.box, phy2->x, phy2->y, col2.box);
+                    }
                 }
+
             }
         }
     }
@@ -68,11 +69,11 @@ CollisionSystem_t<GameCTX_t>::checkEntityCollision(uint32_t x1, uint32_t y1, Bou
 
         box1.collided = true;
         box2.collided = true;
-        
+
         if ( !box1.children.empty() ) {
-            for (auto& child : box1.children) checkEntityCollision(x1, y1, child, x2, y2, box2);
+            for (auto& child1 : box1.children) checkEntityCollision(x1, y1, child1, x2, y2, box2);
         } else if ( !box2.children.empty() ) {
-            for (auto& child : box2.children) checkEntityCollision(x1, y1, box1, x2, y2, child);
+            for (auto& child2 : box2.children) checkEntityCollision(x1, y1, box1, x2, y2, child2);
         }
     }
 }

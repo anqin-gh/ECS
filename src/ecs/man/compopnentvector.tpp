@@ -12,10 +12,8 @@ ComponentVector_t<CMP_t>::deleteComponentByEntityID(EntityID_t eid) {
 
     if (found != end(m_components)) {   // TODO: Error management!!!
         std::cout << "Deleting Component[EID: " << eid << ", CTID: " << CMP_t::getComponentTypeID() << ", CID: " << found->getID() << ']' << std::endl;
-        auto& swapped = *(end(m_components)-1);
-        std::cout << "Swapped  Component[EID: " << swapped.getBelongingEntityID() << ", CTID: " << swapped.getComponentTypeID() << ", CID: " << swapped.getID() << ']'  << std::endl;
-        // std::iter_swap(found, end(m_components)-1);
-        // m_components.pop_back();
+        *found = m_components.back();
+        m_components.pop_back();
     }
 }
 

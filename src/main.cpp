@@ -51,12 +51,12 @@ int main() {
         // main loop
         while( !input.isKeyPressed(XK_Escape) ) {
             auto lastTime = clk::now();
-            render.update(entityMan);
+            spawn.update(entityMan);
             input.update(entityMan);
             physics.update(entityMan);
             collision.update(entityMan);
             health.update(entityMan);
-            spawn.update(entityMan);
+            render.update(entityMan);
 
             auto elapsed = clk::now() - lastTime;
             if(elapsed < kSPF)

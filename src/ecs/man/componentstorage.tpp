@@ -30,7 +30,15 @@ ComponentStorage_t::getComponents() const {
     if (auto found = getComponentsUtil<CMP_t>()) {
         return found->get();
     }
-    throw "WTFFFFF!!!!";
+    throw std::runtime_error("WTFFFFF!!!!");
+}
+
+template<typename CMP_t>
+Vec_t<CMP_t>&
+ComponentStorage_t::getComponents() {
+    if (auto found = const_cast<const ComponentStorage_t*>(this)->getComponentsUtil<CMP_t>())
+        return const_cast<Vec_t<CMP_t>&>(found->get());
+    return createComponentVector<CMP_t>();
 }
 
 template<typename CMP_t>
@@ -46,14 +54,6 @@ ComponentStorage_t::getComponentsUtil() const noexcept {
 
 template<typename CMP_t>
 Vec_t<CMP_t>&
-ComponentStorage_t::getComponents() {
-    if (auto found = const_cast<const ComponentStorage_t*>(this)->getComponentsUtil<CMP_t>())
-        return const_cast<Vec_t<CMP_t>&>(found->get());
-    return createComponentVector<CMP_t>();
-}
-
-template<typename CMP_t>
-Vec_t<CMP_t>&
 ComponentStorage_t::createComponentVector() {
     auto typeID{CMP_t::getComponentTypeID()};
     auto cmpVec = std::make_unique<ComponentVector_t<CMP_t>>();
@@ -61,6 +61,31 @@ ComponentStorage_t::createComponentVector() {
     auto* vecPtr = cmpVec.get();
     m_components[typeID] = std::move(cmpVec);
     return vecPtr->m_components;
+}
+
+template<typename CMP_t>
+const CMP_t*
+ComponentStorage_t::getComponentByEntityID(EntityID_t eid) const {
+    auto& cmp_vect = getComponents<CMP_t>();
+    auto found = std::find_if(begin(cmp_vect), end(cmp_vect), [eid](const auto& cmp) {
+        return cmp.getBelongingEntityID() == eid;
+    });
+    if (found != std::end(cmp_vect)) return found.base();
+    return nullptr;
+}
+
+template<typename CMP_t>
+CMP_t*
+ComponentStorage_t::getComponentByEntityID(EntityID_t eid) {
+    // auto* cmp = const_cast<const ComponentStorage_t*>(this)->getComponentByEntityID<CMP_t>(eid);
+    // return const_cast<CMP_t*>(cmp);
+    // TODO: Repeated code!!!
+    auto& cmp_vect = getComponents<CMP_t>();
+    auto found = std::find_if(begin(cmp_vect), end(cmp_vect), [eid](const auto& cmp) {
+        return cmp.getBelongingEntityID() == eid;
+    });
+    if (found != std::end(cmp_vect)) return found.base();
+    return nullptr;
 }
 
 } // namespace ECS

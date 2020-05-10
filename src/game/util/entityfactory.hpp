@@ -25,6 +25,7 @@ struct EnitityFactory_t {
 
         auto& spw = m_ent_man.addComponent<SpawnerComponent_t>(e);
         spw.spawningAction = action;
+        spw.to_be_spawned = 10;
 
         auto& ph  = m_ent_man.addComponent<PhysicsComponent_t>(e);
         ph.x = x; ph.y = y;

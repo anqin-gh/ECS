@@ -15,8 +15,8 @@
 #include <game/sys/spawn.tpp>
 #include <game/util/entityfactory.hpp>
 
-constexpr uint32_t kSCRWIDTH  { 640 };
-constexpr uint32_t kSCRHEIGHT { 360 };
+constexpr uint32_t kSCRWIDTH  { 1024 };
+constexpr uint32_t kSCRHEIGHT { 768 };
 
 using namespace std::chrono_literals;
 constexpr auto kSPF { 1ms };
@@ -26,13 +26,15 @@ int main() {
         // Entities
         ECS::EntityManager_t entityMan;
         EnitityFactory_t entityFactory{entityMan};
-        entityFactory.createBlade(290, 160);
-        entityFactory.createBlade(100,  10);
+        // entityFactory.createBlade(290, 160);
+        // entityFactory.createBlade(100,  10);
         entityFactory.createPlayer(10,  10);
         entityFactory.createSpawner(200, 150, 
             [&](const auto& spw) {
-                if (auto* phy = entityMan.getRequiredComponent<PhysicsComponent_t>(spw))
+                if (auto* phy = entityMan.getRequiredComponent<PhysicsComponent_t>(spw)) {
                     entityFactory.createBlade(phy->x, phy->y);
+                    entityFactory.createPlayer(phy->x, phy->y);
+                }
             });
 
         // Systems

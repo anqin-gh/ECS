@@ -49,7 +49,8 @@ EnitityFactory_t::createPlayer(uint32_t x, uint32_t y) {
         children_level1.emplace_back(ren->w - 46, ren->w - 20, 147, 158);
     }
     
-    auto* hlth = e.getComponent<HealthComponent_t>();
+    auto& h_cmp = m_ent_man.addComponent<HealthComponent_t>(e);
+    h_cmp.health = 5;
 
     return e;
 }
@@ -59,6 +60,7 @@ EnitityFactory_t::createBlade(uint32_t x, uint32_t y) {
     auto& e = createEntity(x, y, "assets/blade.png");
     auto* phy = e.getComponent<PhysicsComponent_t>();
     phy->vx = 1;
-    phy->vy = 1;
+    m_ent_man.addComponent<HealthComponent_t>(e);
+
     return e;
 }

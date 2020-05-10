@@ -19,7 +19,7 @@ struct Entity_t {
     const CMP_t* getComponent() const noexcept {
         auto typeID = CMP_t::getComponentTypeID();
         auto found = m_components.find(typeID);
-        if (found != end(m_components)) return dynamic_cast<const CMP_t*>(found->second);
+        if (found != std::end(m_components)) return dynamic_cast<const CMP_t*>(found->second);
         return nullptr;
     }
 
@@ -29,9 +29,14 @@ struct Entity_t {
         return const_cast<CMP_t*>(cmp);
     }
 
+    auto begin() const noexcept { return std::begin(m_components); }
+    auto begin()       noexcept { return std::begin(m_components); }
+    auto end()   const noexcept { return std::end(m_components); }
+    auto end()         noexcept { return std::end(m_components); }
+
 private:
     inline static EntityID_t nextID{0};
-    const EntityID_t ID{++nextID};
+    EntityID_t ID{++nextID};
     UMap_t<ComponentTypeID_t, Component_t*> m_components;
 };
 

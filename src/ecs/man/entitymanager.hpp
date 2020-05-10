@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <iostream>
 #include <ecs/cmp/entity.hpp>
 #include <ecs/man/componentstorage.hpp>
 #include <ecs/util/typealiases.hpp>
@@ -59,6 +60,26 @@ struct EntityManager_t {
 	ReqCMP_t* getRequiredComponent(const CMP_t& cmp) noexcept {
 		auto reqCmp = const_cast<const EntityManager_t*>(this)->getRequiredComponent<ReqCMP_t>(cmp);
 		return const_cast<ReqCMP_t*>(reqCmp);
+	}
+
+	void destroyEntityByID(EntityID_t eid) {
+		std::cout << "Entity[" << eid << "] is dead!\n";
+		if (auto* entity = getEntityByID(eid)) {
+			for (auto& [ typeID, cmp ] : *entity) {
+				m_components.deleteComponentByTypeIDAndEntityID(typeID, eid);
+			}
+			auto found = find_if(begin(m_entities), end(m_entities), [eid](const Entity_t& e) {
+				return e.getID() == eid;
+			});
+
+			// auto& last_entity = *(end(m_entities)-1);
+			// for (auto& [ typeID, cmp ] : last_entity) {
+
+			// }
+
+			// std::iter_swap(found, end(m_entities)-1);
+			// m_entities.pop_back();
+		}
 	}
 
 private:

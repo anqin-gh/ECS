@@ -8,7 +8,7 @@ struct Component_t {
     virtual ~Component_t() = default;
 
     virtual ComponentID_t getID() const noexcept = 0;
-    virtual ComponentID_t getBelongingEntityID() const noexcept = 0;
+    virtual EntityID_t getBelongingEntityID() const noexcept = 0;
 
 protected:
     template <typename CMP_t>
@@ -23,21 +23,20 @@ private:
 
 template <typename CMP_t>
 struct ComponentBase_t : public Component_t {
-protected:
+public:
     explicit ComponentBase_t(EntityID_t eid)
         : entityID{eid}
     {}
 
 public:
     constexpr static ComponentTypeID_t getComponentTypeID() noexcept { return Component_t::getComponentTypeID<CMP_t>(); }
-
     ComponentID_t getID() const noexcept override { return ID; }
-    ComponentID_t getBelongingEntityID() const noexcept override { return entityID; }
+    EntityID_t getBelongingEntityID() const noexcept override { return entityID; }
 
 private:
     inline static ComponentID_t nextID{0};
-    const ComponentID_t ID{++nextID};
-    const EntityID_t entityID{0};
+    ComponentID_t ID{++nextID};
+    EntityID_t entityID{0};
 };
 
 } // namespace ECS

@@ -2,7 +2,7 @@
 #include <string_view>
 #include <cstdint>
 #include <ecs/cmp/entity.hpp>
-#include <ecs/man/entitymanager.hpp>
+#include <ecs/man/entitymanager.tpp>
 #include <game/cmp/collider.hpp>
 #include <game/cmp/physics.hpp>
 #include <game/cmp/spawner.hpp>

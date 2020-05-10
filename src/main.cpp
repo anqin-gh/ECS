@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <cstdio>
 
-#include <ecs/man/entitymanager.hpp>
+#include <ecs/man/entitymanager.tpp>
 #include <game/sys/collision.tpp>
 #include <game/sys/health.tpp>
 #include <game/sys/input.tpp>

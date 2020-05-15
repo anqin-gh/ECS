@@ -9,11 +9,6 @@ struct EntityManager_t {
 
     Entity_t& createEntity();
 
-	void destroyEntityByID(EntityID_t eid);
-   
-    const Vec_t<Entity_t>& getEntities() const noexcept;
-          Vec_t<Entity_t>& getEntities()       noexcept;
-
 	const Entity_t* getEntityByID(EntityID_t eid) const noexcept;
 		  Entity_t* getEntityByID(EntityID_t eid) 		noexcept;
 
@@ -28,9 +23,16 @@ struct EntityManager_t {
 	template <typename ReqCMP_t, typename CMP_t> const ReqCMP_t* getRequiredComponent(const CMP_t& cmp) const noexcept;
 	template <typename ReqCMP_t, typename CMP_t> 	   ReqCMP_t* getRequiredComponent(const CMP_t& cmp)       noexcept;
 
+	void markEntityIDToBeDestroyed(EntityID_t eid);
+	void destroyEntities();
+
+private:
+    void destroyEntityByID(EntityID_t eid);
+
 private:
     static constexpr std::size_t kNUM_INITIAL_ENTITIES{1000};
     Vec_t<Entity_t> m_entities{};
+    Vec_t<EntityID_t> m_to_be_destroyed{};
     ComponentStorage_t m_components{kNUM_INITIAL_ENTITIES};
 };
 

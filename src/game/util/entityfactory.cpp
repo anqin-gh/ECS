@@ -30,7 +30,7 @@ ECS::Entity_t&
 EnitityFactory_t::createPlayer(uint32_t x, uint32_t y) {
     auto& e = createEntity(x, y, "assets/characters/Yellow_Front1.png");
     
-    // m_ent_man.addComponent<InputComponent_t>(e);
+    m_ent_man.addComponent<InputComponent_t>(e);
 
     auto* ren = m_ent_man.getComponentByEntityID<RenderComponent_t>(e.getID());
     auto* col = m_ent_man.getComponentByEntityID<ColliderComponent_t>(e.getID());

@@ -24,8 +24,9 @@ struct ComponentStorage_t {
     template<typename CMP_t>       CMP_t* getComponentByEntityID(EntityID_t eid);
 
 private:
-    template<typename CMP_t>
-    Opt_t<Ref_t<const Vec_t<CMP_t>>> getComponentsUtil() const noexcept;
+    template<typename CMP_t> Opt_t<Ref_t<const Vec_t<CMP_t>>> getComponentsUtil() const noexcept;
+
+    template<typename CMP_t> const CMP_t* getComponentMatchingEntityIDInContainer(EntityID_t eid, const Vec_t<CMP_t>& cmps) const noexcept;
 
     template<typename CMP_t> Vec_t<CMP_t>& createComponentVector();
 

@@ -23,7 +23,7 @@ CollisionSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
             for (std::size_t j = i+1; j < col_cmp_vec.size(); ++j) {
                 auto& col2 = col_cmp_vec[j];
 
-                if ( col1.mask & col2.mask ) { // If collider are in the same layer
+                if ( col1.mask & col2.mask ) { // If colliders are in the same layer
                     if (auto* phy2 = ctx.template getRequiredComponent<PhysicsComponent_t>(col2)) {
                         checkEntityCollision(phy1->x, phy1->y, col1.box, phy2->x, phy2->y, col2.box);
                     }
@@ -41,7 +41,6 @@ CollisionSystem_t<GameCTX_t>::setUncollided(BoundingBoxNode_t& box_node) const n
     for (auto& child : box_node.children) setUncollided(child);
 }
 
-using namespace std;
 template<typename GameCTX_t>
 constexpr void
 CollisionSystem_t<GameCTX_t>::checkBoundaryCollisions(const ColliderComponent_t& col, PhysicsComponent_t& phy) const noexcept {
@@ -67,13 +66,13 @@ CollisionSystem_t<GameCTX_t>::checkEntityCollision(uint32_t x1, uint32_t y1, Bou
     // Check interval intersection in both axes
     if (isIntervalIntersecting(xl1, xr1, xl2, xr2) && isIntervalIntersecting(yu1, yd1, yu2, yd2)) {
 
-        box1.collided = true;
-        box2.collided = true;
-
         if ( !box1.children.empty() ) {
             for (auto& child1 : box1.children) checkEntityCollision(x1, y1, child1, x2, y2, box2);
         } else if ( !box2.children.empty() ) {
             for (auto& child2 : box2.children) checkEntityCollision(x1, y1, box1, x2, y2, child2);
+        } else {
+            box1.collided = true;
+            box2.collided = true;
         }
     }
 }

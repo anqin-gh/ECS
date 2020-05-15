@@ -12,9 +12,8 @@ HealthSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
     for (auto& h : ctx.template getComponents<HealthComponent_t>()) {
         if (const auto* col = ctx.template getRequiredComponent<ColliderComponent_t>(h)) {
             if (h.health && hasLeafNodeColided(col->box)) {
-                cout << "Remaining life of Entity[" << h.getBelongingEntityID() << "] = " << h.health -1<< endl;
                 if (--h.health == 0)
-                    ctx.destroyEntityByID(h.getBelongingEntityID());
+                    ctx.markEntityIDToBeDestroyed(h.getBelongingEntityID());
             }
         }
     }
@@ -23,10 +22,12 @@ HealthSystem_t<GameCTX_t>::update(GameCTX_t& ctx) const noexcept {
 template<typename GameCTX_t>
 constexpr bool
 HealthSystem_t<GameCTX_t>::hasLeafNodeColided(const BoundingBoxNode_t& box_node) const noexcept {
-    if (box_node.children.empty()) return box_node.collided;
-    if (box_node.collided) {
-        for (const auto& child : box_node.children)
-            return hasLeafNodeColided(child);
+    // TODO: Use approach where inner boxes are true only when outer boxes are. Current approch is the other way round (less efficient)!!!
+    if (box_node.children.empty()) {
+        return box_node.collided;
+    }
+    for (const auto& child : box_node.children) {
+        if ( hasLeafNodeColided(child) ) return true;
     }
     return false;
 }

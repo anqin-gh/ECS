@@ -66,25 +66,27 @@ ComponentStorage_t::createComponentVector() {
 template<typename CMP_t>
 const CMP_t*
 ComponentStorage_t::getComponentByEntityID(EntityID_t eid) const {
-    auto& cmp_vect = getComponents<CMP_t>();
-    auto found = std::find_if(begin(cmp_vect), end(cmp_vect), [eid](const auto& cmp) {
-        return cmp.getBelongingEntityID() == eid;
-    });
-    if (found != std::end(cmp_vect)) return found.base();
-    return nullptr;
+    auto& cmp_vec = getComponents<CMP_t>(); // calls const method (throws if doesn't exist)
+    auto cmp = getComponentMatchingEntityIDInContainer(eid, cmp_vec);
+    return cmp;
 }
 
 template<typename CMP_t>
 CMP_t*
 ComponentStorage_t::getComponentByEntityID(EntityID_t eid) {
-    // auto* cmp = const_cast<const ComponentStorage_t*>(this)->getComponentByEntityID<CMP_t>(eid);
-    // return const_cast<CMP_t*>(cmp);
-    // TODO: Repeated code!!!
-    auto& cmp_vect = getComponents<CMP_t>();
-    auto found = std::find_if(begin(cmp_vect), end(cmp_vect), [eid](const auto& cmp) {
-        return cmp.getBelongingEntityID() == eid;
-    });
-    if (found != std::end(cmp_vect)) return found.base();
+    auto& cmp_vec = getComponents<CMP_t>(); // calls non-const method (creates vector if doesn't exist)
+    auto cmp = getComponentMatchingEntityIDInContainer(eid, cmp_vec);
+    return const_cast<CMP_t*>(cmp);
+    
+}
+
+template<typename CMP_t>
+const CMP_t*
+ComponentStorage_t::getComponentMatchingEntityIDInContainer(EntityID_t eid, const Vec_t<CMP_t>& cmps) const noexcept {
+    auto found = std::find_if(begin(cmps), end(cmps), [eid](const auto& cmp) {
+            return cmp.getBelongingEntityID() == eid;
+        });
+    if (found != std::end(cmps)) return found.base();
     return nullptr;
 }
 

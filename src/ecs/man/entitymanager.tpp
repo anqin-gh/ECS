@@ -8,35 +8,11 @@ namespace ECS {
 
 inline EntityManager_t::EntityManager_t() {
 	m_entities.reserve(kNUM_INITIAL_ENTITIES);
+	m_to_be_destroyed.reserve(kNUM_INITIAL_ENTITIES);
 }
 
 inline Entity_t&
 EntityManager_t::createEntity() { return m_entities.emplace_back(); }
-
-inline void
-EntityManager_t::destroyEntityByID(EntityID_t eid) {
-    std::cout << "Entity[" << eid << "] is dead!\n";
-    if (auto* entity = getEntityByID(eid)) {
-        for (auto& [ typeID, _ ] : *entity) {
-            m_components.deleteComponentByTypeIDAndEntityID(typeID, eid);
-        }
-
-        auto found = std::find_if(begin(m_entities), end(m_entities), [eid](const Entity_t& e) {
-            return e.getID() == eid;
-        });
-
-        if (found != end(m_entities)) {   // TODO: Error management!!!
-            *found = m_entities.back();
-            m_entities.pop_back();
-        }
-    }
-}
-
-inline const Vec_t<Entity_t>&
-EntityManager_t::getEntities() const noexcept { return m_entities; }
-
-inline Vec_t<Entity_t>&
-EntityManager_t::getEntities() noexcept { return m_entities; }
 
 inline const Entity_t*
 EntityManager_t::getEntityByID(EntityID_t eid) const noexcept {
@@ -97,6 +73,37 @@ ReqCMP_t*
 EntityManager_t::getRequiredComponent(const CMP_t& cmp) noexcept {
     auto reqCmp = const_cast<const EntityManager_t*>(this)->getRequiredComponent<ReqCMP_t>(cmp);
     return const_cast<ReqCMP_t*>(reqCmp);
+}
+
+inline void
+EntityManager_t::markEntityIDToBeDestroyed(EntityID_t eid) {
+    m_to_be_destroyed.emplace_back(eid);
+}
+
+inline void
+EntityManager_t::destroyEntities() {
+    for (auto eid : m_to_be_destroyed)
+        destroyEntityByID(eid);
+    m_to_be_destroyed.clear();
+}
+
+inline void
+EntityManager_t::destroyEntityByID(EntityID_t eid) {
+    std::cout << "Entity[" << eid << "] is dead!\n";
+    if (auto* entity = getEntityByID(eid)) {
+        for (auto& [ typeID, _ ] : *entity) {
+            m_components.deleteComponentByTypeIDAndEntityID(typeID, eid);
+        }
+
+        auto found = std::find_if(begin(m_entities), end(m_entities), [eid](const Entity_t& e) {
+            return e.getID() == eid;
+        });
+
+        if (found != end(m_entities)) {   // TODO: Error management!!!
+            *found = m_entities.back();
+            m_entities.pop_back();
+        }
+    }
 }
 
 } // namespace ECS
